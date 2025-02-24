@@ -17,3 +17,8 @@ func APIValidation(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
+
+func UserValidation(c *fiber.Ctx) error {
+	// todo: 유저 검증 로직 추가
+	return c.Next()
+}

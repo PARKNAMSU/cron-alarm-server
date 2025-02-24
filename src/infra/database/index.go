@@ -49,7 +49,7 @@ var (
 	mysqlEngine dbEngine = "mysql"
 )
 
-func (c *CustomDB) Connect() {
+func (c *CustomDB) connect() {
 	if c.conn != nil {
 		return
 	}

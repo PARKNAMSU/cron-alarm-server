@@ -5,6 +5,25 @@ import (
 	"os"
 )
 
+type TableKey = string
+
+var (
+	MYSQL_TABLE = map[TableKey]string{
+		"user":             "user",
+		"userInformation":  "user_information",
+		"userOauth":        "user_oauth",
+		"userLoginData":    "user_login_data",
+		"userRefreshToken": "user_refresh_token",
+
+		"admin": "admin",
+
+		"alarmMethod": "alarm_method",
+		"alarmLog":    "alarm_log",
+
+		"taskLog": "task_log",
+	}
+)
+
 func getMysqlConnect(config dbConfig) string {
 	return fmt.Sprintf(
 		`%s:%s@tcp(%s)/%s?charset=%s&parseTime=True&maxAllowedPacket=%d`,
@@ -30,7 +49,7 @@ func GetMysqlMaster(isTransaction bool) *CustomDB {
 		},
 		isTransaction: isTransaction,
 	}
-	mysqlMasterDB.Connect()
+	mysqlMasterDB.connect()
 	return mysqlMasterDB
 }
 
@@ -47,6 +66,6 @@ func GetMysqlSlave() *CustomDB {
 		},
 		isTransaction: false,
 	}
-	mysqlSlaveDB.Connect()
+	mysqlSlaveDB.connect()
 	return mysqlSlaveDB
 }
