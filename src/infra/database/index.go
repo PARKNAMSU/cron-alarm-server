@@ -74,15 +74,15 @@ func (c *CustomDB) connect() {
 	db.SetConnMaxLifetime(time.Minute)
 	db.SetConnMaxIdleTime(time.Minute)
 
-	maxIdleConn := 1
-	maxOpenConn := 1
+	maxIdleConn := 10
+	maxOpenConn := 10
 	switch variable.ENVIRONMENT {
 	case "production":
-		maxIdleConn = 5
-		maxOpenConn = 5
+		maxIdleConn = 30
+		maxOpenConn = 30
 	case "staging":
-		maxIdleConn = 2
-		maxOpenConn = 2
+		maxIdleConn = 20
+		maxOpenConn = 20
 	}
 
 	db.SetMaxIdleConns(maxIdleConn)

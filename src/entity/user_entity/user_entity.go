@@ -8,6 +8,7 @@ import (
 
 type UserEntity struct { // table: user
 	Id     int    `db:"id"`
+	Method string `db:"method"` // normal: 일반 유저, oauth: 소셜 로그인 유저
 	Status int    `db:"status"`
 	IpAddr string `db:"ip_addr"`
 	common_entity.Timestamp
@@ -21,9 +22,9 @@ type UserLoginDataEntity struct { // table: user_login_data (유저 로그인 �
 }
 
 type UserOauthEntity struct { // table: user_oauth (유저 소셜 로그인 정보)
-	UserId    *int    `db:"user_id"`
-	OauthId   *string `db:"oauth_id"`
-	OauthHost *string `db:"oauth_host"`
+	UserId    int    `db:"user_id"`
+	OauthId   string `db:"oauth_id"`
+	OauthHost string `db:"oauth_host"`
 	common_entity.Timestamp
 }
 
@@ -36,10 +37,10 @@ type UserInformation struct { // table: user_information (유저 데이터 전�
 	common_entity.Timestamp
 }
 
-// revoke token 검증을 위한 테이블
-type UserRefreshTokenEntity struct {
-	UserId *int    `db:"user_id"`
-	Token  *string `db:"token"`
-	IpAddr *string `db:"ip_addr"`
+// refresh token 검증을 위한 테이블
+type UserRefreshTokenEntity struct { // table: user_refresh_token
+	UserId int    `db:"user_id"`
+	Token  string `db:"token"`
+	IpAddr string `db:"ip_addr"`
 	common_entity.Timestamp
 }

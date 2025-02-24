@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	API_KEY = os.Getenv("X_API_KEY")
+	apiKey = os.Getenv("X_API_KEY")
 )
 
 func APIValidation(c *fiber.Ctx) error {
 	apiKey := c.Get("x-api-key")
-	if apiKey != API_KEY {
+	if apiKey != apiKey {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "unauthorized"})
 	}
 	return c.Next()
