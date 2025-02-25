@@ -6,7 +6,7 @@ import (
 
 type UserRepositoryImpl interface {
 	GetUser(input GetUserInput) *GetUserOutput
-	CreateUser(input CreateUserInput) error
+	CreateUser(input CreateUserInput) (int, error)
 	SetUserLoginData(input SetUserLoginDataInput) error
 	SetUserOauth(input SetUserOauthInput) error
 	SetUserInformation(input SetUserInformationInput) error
@@ -39,9 +39,9 @@ func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 	return &GetUserOutput{}
 }
 
-func (r *userRepository) CreateUser(input CreateUserInput) error {
+func (r *userRepository) CreateUser(input CreateUserInput) (int, error) {
 	// todo: 유저데이터 생성 구현
-	return nil
+	return 0, nil
 }
 
 func (r *userRepository) SetUserLoginData(input SetUserLoginDataInput) error {

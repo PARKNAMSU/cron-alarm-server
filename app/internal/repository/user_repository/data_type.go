@@ -2,6 +2,13 @@ package user_repository
 
 import "time"
 
+type GetUserSelectKeyType uint8
+
+var (
+	GET_USER_KEY_EMAIL GetUserSelectKeyType = 0
+	GET_USER_KEY_ID    GetUserSelectKeyType = 1
+)
+
 type CreateUserInput struct {
 	IpAddr string
 }
@@ -38,7 +45,7 @@ type SetUserRefreshTokenInput struct {
 type GetUserInput struct {
 	UserId        uint
 	Email         string
-	SelectKeyType uint8
+	SelectKeyType GetUserSelectKeyType
 }
 
 type GetUserOutput struct {
