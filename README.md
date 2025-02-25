@@ -6,7 +6,7 @@
 
 ## 프로젝트 구성
 
-> cmd
-> config
-> internal
-> pkg
+* cmd
+* config
+* internal
+* pkg
