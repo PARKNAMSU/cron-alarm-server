@@ -29,8 +29,8 @@ func GetApp() *fiber.App {
 		return c.Next()
 	})
 
-	app.Route("/api/v1", v1.APIV1Router())
-	app.Route("/api/v2", v2.APIV2Router())
+	app.Route("/api/v1", v1.Router())
+	app.Route("/api/v2", v2.Router())
 
 	app.Listen(":8080")
 
