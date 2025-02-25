@@ -1,10 +1,10 @@
-package src
+package internal
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"nspark-cron-alarm.com/cron-alarm-server/src/middleware"
-	v1 "nspark-cron-alarm.com/cron-alarm-server/src/router/v1"
-	v2 "nspark-cron-alarm.com/cron-alarm-server/src/router/v2"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/middleware"
+	v1 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v1"
+	v2 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v2"
 )
 
 var (

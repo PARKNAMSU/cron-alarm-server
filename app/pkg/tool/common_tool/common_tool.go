@@ -1,6 +1,9 @@
 package common_tool
 
-import "sync"
+import (
+	"reflect"
+	"sync"
+)
 
 func ParallelExec(funcs ...func()) {
 	var wg *sync.WaitGroup
@@ -15,4 +18,8 @@ func ParallelExec(funcs ...func()) {
 		}()
 	}
 	wg.Wait()
+}
+
+func IsSlice(v interface{}) bool {
+	return reflect.TypeOf(v).Kind() == reflect.Slice
 }

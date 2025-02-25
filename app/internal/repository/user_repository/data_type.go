@@ -35,6 +35,12 @@ type SetUserRefreshTokenInput struct {
 	IpAddr string
 }
 
+type GetUserInput struct {
+	UserId        uint
+	Email         string
+	SelectKeyType uint8
+}
+
 type GetUserOutput struct {
 	UserId    int
 	Method    string
@@ -47,6 +53,10 @@ type GetUserOutput struct {
 	OauthHost *string
 	Auth      int
 	AuthType  *string
-	createdAt time.Time
-	updatedAt *time.Time
+	CreatedAt time.Time
+	UpdatedAt *time.Time
+}
+
+type DeleteUserInput struct {
+	UserId int
 }

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"nspark-cron-alarm.com/cron-alarm-server/src/variable"
+	"nspark-cron-alarm.com/cron-alarm-server/app/config"
 )
 
 /*
@@ -76,7 +76,7 @@ func (c *CustomDB) connect() {
 
 	maxIdleConn := 10
 	maxOpenConn := 10
-	switch variable.ENVIRONMENT {
+	switch config.ENVIRONMENT {
 	case "production":
 		maxIdleConn = 30
 		maxOpenConn = 30

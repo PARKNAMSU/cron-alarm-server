@@ -1,6 +1,6 @@
 package common_repository
 
-import "nspark-cron-alarm.com/cron-alarm-server/src/infra/database"
+import "nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
 
 type Repository struct {
 	MasterDB *database.CustomDB

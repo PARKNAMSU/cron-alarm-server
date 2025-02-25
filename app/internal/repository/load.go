@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"nspark-cron-alarm.com/cron-alarm-server/src/interface/repository_impl"
-	"nspark-cron-alarm.com/cron-alarm-server/src/repository/user_repository"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/interface/repository_impl"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
 )
 
 func RepositoryLoad() {
