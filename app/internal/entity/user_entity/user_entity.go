@@ -3,7 +3,7 @@ package user_entity
 import (
 	"database/sql"
 
-	"nspark-cron-alarm.com/cron-alarm-server/src/entity/common_entity"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/common_entity"
 )
 
 type UserEntity struct { // table: user
