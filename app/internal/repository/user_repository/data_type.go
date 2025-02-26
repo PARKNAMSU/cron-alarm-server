@@ -42,6 +42,13 @@ type SetUserRefreshTokenInput struct {
 	IpAddr string
 }
 
+type GetRefreshTokenInput struct {
+	Token  string
+	UserId int
+	IpAddr string
+	Status int
+}
+
 type GetUserInput struct {
 	UserId        uint
 	Email         string

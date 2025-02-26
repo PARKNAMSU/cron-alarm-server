@@ -13,6 +13,8 @@ type UserRepositoryImpl interface {
 	Authorization(input AuthorizationInput) error
 	SetUserRefreshToken(input SetUserRefreshTokenInput) error
 	DeleteUser(input DeleteUserInput) error
+	GetUserApiKey(userId int) *string
+	GetRefreshToken(token string) *GetRefreshTokenInput
 }
 
 type userRepository struct {
@@ -69,7 +71,18 @@ func (r *userRepository) SetUserRefreshToken(input SetUserRefreshTokenInput) err
 	return nil
 }
 
+func (r *userRepository) GetRefreshToken(token string) *GetRefreshTokenInput {
+	// todo: refresh token 가져오기
+	return nil
+}
+
 func (r *userRepository) DeleteUser(input DeleteUserInput) error {
 	// todo: 유저 delete 세팅
 	return nil
+}
+
+func (r *userRepository) GetUserApiKey(userId int) *string {
+	// todo: 유저 api key 가져오기
+	var key *string
+	return key
 }

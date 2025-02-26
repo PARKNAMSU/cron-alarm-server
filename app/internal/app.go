@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/di"
 	v1 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v1"
 	v2 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v2"
 )
@@ -27,13 +26,10 @@ var (
 			return nil
 		},
 	}
-	middleware = di.InitMiddleware()
 )
 
 func GetApp() *fiber.App {
 	app := fiber.New(appCfg)
-
-	app.Use(middleware.APIValidation)
 
 	app.Use(func(c *fiber.Ctx) error {
 		c.Accepts("html")                           // "html"

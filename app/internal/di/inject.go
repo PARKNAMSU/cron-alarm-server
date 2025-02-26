@@ -28,5 +28,5 @@ func InitUserController() *user_controller.UserController {
 }
 
 func InitMiddleware() *middleware.Middleware {
-	return middleware.NewMiddleware(slaveDB, masterDB)
+	return middleware.NewMiddleware(userRepository)
 }
