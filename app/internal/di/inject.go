@@ -2,6 +2,7 @@ package di
 
 import (
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/controller/user_controller"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/middleware"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/usecase/user_usecase"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
@@ -24,4 +25,8 @@ var ( // usecase 객체 초기화
 
 func InitUserController() *user_controller.UserController {
 	return user_controller.NewController(userUsecase)
+}
+
+func InitMiddleware() *middleware.Middleware {
+	return middleware.NewMiddleware(slaveDB, masterDB)
 }

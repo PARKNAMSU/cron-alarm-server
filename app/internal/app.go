@@ -1,8 +1,11 @@
 package internal
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/middleware"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/di"
 	v1 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v1"
 	v2 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v2"
 )
@@ -12,7 +15,19 @@ var (
 		ServerHeader: "Fiber",
 		AppName:      "cron alarm service",
 		Prefork:      true,
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
+			}
+			if err != nil {
+				fmt.Println("[Unexpected Error]:[", err.Error(), "]")
+				return ctx.Status(code).SendString("Internal Server Error")
+			}
+			return nil
+		},
 	}
+	middleware = di.InitMiddleware()
 )
 
 func GetApp() *fiber.App {
@@ -31,6 +46,16 @@ func GetApp() *fiber.App {
 
 	app.Route("/api/v1", v1.Router())
 	app.Route("/api/v2", v2.Router())
+
+	app.Hooks().OnListen(func(listenData fiber.ListenData) error {
+		fmt.Printf("[Server is running on]:[%s:%s]\n", listenData.Host, listenData.Port)
+		return nil
+	})
+
+	app.Hooks().OnShutdown(func() error {
+		fmt.Printf("Server is shutting down [time ]:[%s]\n", time.Now().Format("2006-01-02 15:04:05"))
+		return nil
+	})
 
 	app.Listen(":8080")
 
