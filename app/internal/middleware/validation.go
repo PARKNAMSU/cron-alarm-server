@@ -59,7 +59,7 @@ func (m *Middleware) UserValidation(c *fiber.Ctx) error {
 		return errors.New("user api key not found")
 	}
 
-	userKeyBytes, _ := encrypt_tool.Decrypt(headerApiKey, config.USER_API_ENCRYPT_KEY)
+	userKeyBytes, _ := encrypt_tool.Decrypt(*key, config.USER_API_ENCRYPT_KEY)
 	requestBytes, _ := encrypt_tool.Decrypt(headerApiKey, config.USER_API_ENCRYPT_KEY)
 
 	if string(userKeyBytes) != string(requestBytes) {
