@@ -6,15 +6,15 @@
 
 ## controller
 
-### user controller
+### [user controller](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/controller/user_controller/user_controller.go)
 
 ## usecase
 
-### user usecase
+### [user usecase](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/usecase/user_usecase/user_usecase.go)
 
 ## repository
 
-### user repository
+### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go)
 * GetUser
 * CreateUser
 * SetUserLoginData
@@ -30,13 +30,13 @@
 
 ### user entity
 
-## di 
+## [di](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/di/inject.go) 
 의존성 주입을 활용하여 
 `repository` , `usecase` , `controller`, `middleware` 객체를 중앙에서 초기화 후 필요한 외부 패키지에서 사용
 
 ## middleware
 
-### user validation middleware
+### [user validation middleware](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/middleware/validation.go)
 
 JWT 토큰과 API 키를 검증하여 사용자 인증을 수행하는 미들웨어.
 이를 통해 유효한 사용자만 API 요청을 수행할 수 있도록 보호
