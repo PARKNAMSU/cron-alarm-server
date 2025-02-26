@@ -6,12 +6,48 @@
 
 ## controller
 
+### user controller
+
 ## usecase
+
+### user usecase
 
 ## repository
 
+### user repository
+* GetUser
+* CreateUser
+* SetUserLoginData
+* SetUserOauth
+* SetUserInformation
+* Authorization
+* SetUserRefreshToken
+* DeleteUser
+* GetUserApiKey
+* GetRefreshToken
+
 ## entity
 
+### user entity
+
 ## di 
+의존성 주입을 활용하여 
+`repository` , `usecase` , `controller`, `middleware` 객체를 중앙에서 초기화 후 필요한 외부 패키지에서 사용
 
 ## middleware
+
+### user validation middleware
+
+JWT 토큰과 API 키를 검증하여 사용자 인증을 수행하는 미들웨어.
+이를 통해 유효한 사용자만 API 요청을 수행할 수 있도록 보호
+
+1. 요청 헤더에서 필요한 정보를 추출
+    * `x-api-key`: 유저 개인별 API 키
+    * `access-token`: 접근 JWT 토큰
+    * `refresh-token`: 갱신 JWT 토큰 
+2. JWT 토큰 검증
+    * 접근토큰 검증후 성공시 다음 로직 진행
+    * 실패 시 전달받은 갱신토큰이 존재하는지 DB 검색 
+    * 해당 토큰이 유효한경우 접근토큰 갱신 진행
+3. API 키 검증
+4. 이후의 로직에서 사용할 수 있게 사용자 데이터를 컨텍스트에 저장
