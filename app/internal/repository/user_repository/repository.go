@@ -1,7 +1,9 @@
 package user_repository
 
 import (
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/user_entity"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
+	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/query_tool"
 )
 
 type UserRepositoryImpl interface {
@@ -38,7 +40,73 @@ func NewRepository(masterDB *database.CustomDB, slaveDB *database.CustomDB) User
 
 func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 	// todo: email 통해 유저데이터 가져오기 구현
-	return &GetUserOutput{}
+	var data []user_entity.UserDataEntity
+
+	where := map[string]any{}
+
+	if input.SelectKeyType == GET_USER_KEY_EMAIL {
+		where["ui.email"] = input.Email
+	} else if input.SelectKeyType == GET_USER_KEY_ID {
+		where["u.id"] = input.UserId
+	} else {
+		return nil
+	}
+
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["user"],
+		Action: query_tool.SELECT,
+		Select: []string{"ui.user_id"},
+		As:     "u",
+		Join: []query_tool.JoinParams{
+			{
+				Table: database.MYSQL_TABLE["user_information"],
+				As:    "ui",
+				On:    "u.id = ui.user_id",
+				Type:  "INNER",
+			},
+			{
+				Table: database.MYSQL_TABLE["user_oauth"],
+				As:    "uo",
+				On:    "u.id = ui.user_id",
+				Type:  "LEFT",
+			},
+			{
+				Table: database.MYSQL_TABLE["user_login_data"],
+				As:    "ul",
+				On:    "u.id = ui.user_id",
+				Type:  "LEFT",
+			},
+		},
+		Where: where,
+	})
+
+	r.slaveDB.QuerySelect(
+		&data,
+		query,
+		params...,
+	)
+
+	if len(data) == 0 {
+		return nil
+	}
+
+	user := data[0]
+
+	return &GetUserOutput{
+		UserId:    user.UserId,
+		Method:    user.Method,
+		Status:    user.Status,
+		IpAddr:    user.IpAddr,
+		Email:     user.Email,
+		Password:  user.Password,
+		Name:      user.Name,
+		OauthId:   user.OauthId,
+		OauthHost: user.OauthHost,
+		Auth:      user.Auth,
+		AuthType:  user.AuthType,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
 }
 
 func (r *userRepository) CreateUser(input CreateUserInput) (int, error) {

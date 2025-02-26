@@ -28,12 +28,27 @@ type UserOauthEntity struct { // table: user_oauth (유저 소셜 로그인 정�
 	common_entity.Timestamp
 }
 
-type UserInformation struct { // table: user_information (유저 데이터 전달용 정보)
+type UserInformationEntity struct { // table: user_information (유저 데이터 전달용 정보)
 	UserId   int            `db:"user_id"`
 	Email    sql.NullString `db:"email"`
 	Name     sql.NullString `db:"name"`
 	Auth     int            `db:"auth"`
 	AuthType sql.NullString `db:"auth_type"`
+	common_entity.Timestamp
+}
+
+type UserDataEntity struct {
+	UserId    int     `db:"user_id"`
+	Email     *string `db:"email"`
+	Password  *string `db:"password"`
+	Method    string  `db:"method"` // normal: 일반 유저, oauth: 소셜 로그인 유저
+	Status    int     `db:"status"`
+	IpAddr    string  `db:"ip_addr"`
+	Name      *string `db:"name"`
+	Auth      int     `db:"auth"`
+	AuthType  *string `db:"auth_type"`
+	OauthId   *string `db:"oauth_id"`
+	OauthHost *string `db:"oauth_host"`
 	common_entity.Timestamp
 }
 

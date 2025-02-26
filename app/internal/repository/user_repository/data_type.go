@@ -58,7 +58,7 @@ type GetUserInput struct {
 type GetUserOutput struct {
 	UserId    int
 	Method    string
-	Status    string
+	Status    int
 	IpAddr    string
 	Email     *string
 	Password  *string
