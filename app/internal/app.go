@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	v1 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v1"
 	v2 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v2"
 )
@@ -30,6 +31,8 @@ var (
 
 func GetApp() *fiber.App {
 	app := fiber.New(appCfg)
+
+	app.Use(recover.New())
 
 	app.Use(func(c *fiber.Ctx) error {
 		c.Accepts("html")                           // "html"
