@@ -5,19 +5,27 @@ import (
 	"sync"
 )
 
-func ParallelExec(funcs ...func()) {
+func ParallelExec(funcs ...func() error) []error {
 	var wg *sync.WaitGroup
+	var mx *sync.Mutex
 
 	wg.Add(len(funcs))
+
+	var errors []error
 
 	for _, exec := range funcs {
 		exec := exec
 		go func() {
 			defer wg.Done()
-			exec()
+			if err := exec(); err != nil {
+				mx.Lock()
+				errors = append(errors, err)
+				mx.Unlock()
+			}
 		}()
 	}
 	wg.Wait()
+	return errors
 }
 
 func IsSlice(v interface{}) bool {

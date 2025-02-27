@@ -37,9 +37,10 @@ type AuthorizationInput struct {
 }
 
 type SetUserRefreshTokenInput struct {
-	UserId int
-	Token  string
-	IpAddr string
+	UserId    int
+	Token     string
+	IpAddr    string
+	ExpiredAt time.Time
 }
 
 type GetRefreshTokenInput struct {

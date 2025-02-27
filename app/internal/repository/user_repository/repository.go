@@ -39,7 +39,6 @@ func NewRepository(masterDB *database.CustomDB, slaveDB *database.CustomDB) User
 }
 
 func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
-	// todo: email 통해 유저데이터 가져오기 구현
 	var data []user_entity.UserDataEntity
 
 	where := map[string]any{}

@@ -73,20 +73,21 @@ func QueryBuilder(params QueryParams) (string, []any) {
 	setParams := make([]any, 0, len(params.Set))
 	dupParams := make([]any, 0, len(params.Duplicate))
 
-	generateJoinQuery := func() {
+	generateJoinQuery := func() error {
 		joinStr := make([]string, 0, len(params.Join))
 		for _, join := range params.Join {
 			joinStr = append(joinStr, fmt.Sprintf("%s JOIN %s AS %s ON %s ", join.Type, join.Table, join.As, join.On))
 		}
 		join = strings.Join(joinStr, " ")
+		return nil
 	}
 
-	generateSetQuery := func() {
+	generateSetQuery := func() error {
 		if params.Action == SELECT || params.Action == DELETE {
-			return
+			return nil
 		}
 		if len(params.Set) <= 0 {
-			return
+			return nil
 		}
 
 		set = "SET"
@@ -102,15 +103,16 @@ func QueryBuilder(params QueryParams) (string, []any) {
 			set,
 			strings.Join(setList, " , "),
 		}, " ")
+		return nil
 	}
 
-	generateWhereQuery := func() {
+	generateWhereQuery := func() error {
 		if params.Action == INSERT || params.Action == IGNORE {
-			return
+			return nil
 		}
 
 		if len(params.Where) <= 0 {
-			return
+			return nil
 		}
 
 		where = "WHERE"
@@ -160,15 +162,16 @@ func QueryBuilder(params QueryParams) (string, []any) {
 			where,
 			strings.Join(whereList, " AND "),
 		}, " ")
+		return nil
 	}
 
-	generateDupQuery := func() {
+	generateDupQuery := func() error {
 		if params.Action != DUPLICATE {
-			return
+			return nil
 		}
 
 		if len(params.Duplicate) <= 0 {
-			return
+			return nil
 		}
 
 		duplicate = "ON DUPLICATE KEY UPDATE"
@@ -183,6 +186,7 @@ func QueryBuilder(params QueryParams) (string, []any) {
 			duplicate,
 			strings.Join(dupList, " , "),
 		}, " ")
+		return nil
 	}
 
 	switch params.Action {

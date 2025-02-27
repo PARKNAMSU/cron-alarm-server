@@ -54,10 +54,11 @@ type UserDataEntity struct {
 
 // refresh token 검증을 위한 테이블 - 상태 및 ip 주소 같이 저장하여 유효 토큰 여부 관리
 type UserRefreshTokenEntity struct { // table: user_refresh_token
-	Token  string `db:"token"`
-	UserId int    `db:"user_id"`
-	Status int    `db:"status"`  // 1: 사용 가능, 0: 탈취됨
-	IpAddr string `db:"ip_addr"` // 토큰 발급 당시의 IP 주소
+	Token     string `db:"token"`
+	UserId    int    `db:"user_id"`
+	Status    int    `db:"status"`     // 1: 사용 가능, 0: 탈취됨
+	IpAddr    string `db:"ip_addr"`    // 토큰 발급 당시의 IP 주소
+	ExpiredAt string `db:"expired_at"` // 토큰 만료 시간
 	common_entity.Timestamp
 }
 
