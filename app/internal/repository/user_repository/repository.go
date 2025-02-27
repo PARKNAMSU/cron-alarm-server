@@ -109,13 +109,42 @@ func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 }
 
 func (r *userRepository) CreateUser(input CreateUserInput) (int, error) {
-	// todo: 유저데이터 생성 구현
-	return 0, nil
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["user"],
+		Action: query_tool.INSERT,
+		Set: map[string]any{
+			"ip_addr": input.IpAddr,
+			"method":  "normal",
+			"status":  1,
+		},
+	})
+
+	result, err := r.masterDB.QueryExecute(query, params...)
+
+	if err != nil {
+		return 0, nil
+	}
+
+	id, _ := result.LastInsertId()
+
+	return int(id), err
 }
 
 func (r *userRepository) SetUserLoginData(input SetUserLoginDataInput) error {
-	// todo: 유저 로그인 데이터 세팅 구현
-	return nil
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+
+		Table:  database.MYSQL_TABLE["user"],
+		Action: query_tool.DUPLICATE,
+		Set: map[string]any{
+			"email":    input.Email,
+			"password": input.Password,
+		},
+		Where: map[string]any{
+			"user_id": input.UserId,
+		},
+	})
+	_, err := r.masterDB.QueryExecute(query, params...)
+	return err
 }
 
 func (r *userRepository) SetUserOauth(input SetUserOauthInput) error {

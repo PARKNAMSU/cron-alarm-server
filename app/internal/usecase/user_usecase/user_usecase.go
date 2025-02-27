@@ -89,14 +89,14 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 	userData.Auth = 0
 	userData.CreatedAt = time.Now()
 
-	accessToken := jwt_tool.GenerateToken(userData, config.JWT_ACCESS_TOKEN_KEY, config.JWT_ACCESS_TOKEN_PERIOD_TIME)
-	refreshToken := jwt_tool.GenerateToken(userData, config.JWT_REFRESH_TOKEN_KEY, config.JWT_REFRESH_TOKEN_PERIOD_TIME)
+	accessToken := jwt_tool.GenerateToken(userData, config.JWT_ACCESS_TOKEN_KEY, config.JWT_ACCESS_TOKEN_PERIOD)
+	refreshToken := jwt_tool.GenerateToken(userData, config.JWT_REFRESH_TOKEN_KEY, config.JWT_REFRESH_TOKEN_PERIOD)
 
 	if err := u.userRepository.SetUserRefreshToken(user_repository.SetUserRefreshTokenInput{
 		UserId:    output.UserId,
 		Token:     refreshToken,
 		IpAddr:    input.IpAddr,
-		ExpiredAt: time.Now().Add(config.JWT_REFRESH_TOKEN_PERIOD_TIME),
+		ExpiredAt: time.Now().Add(config.JWT_REFRESH_TOKEN_PERIOD),
 	}); err != nil {
 		return nil, err
 	}

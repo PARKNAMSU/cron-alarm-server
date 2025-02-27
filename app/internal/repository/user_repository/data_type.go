@@ -11,6 +11,7 @@ var (
 
 type CreateUserInput struct {
 	IpAddr string
+	Method string
 }
 
 type SetUserLoginDataInput struct {
