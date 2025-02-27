@@ -6,7 +6,7 @@
 
 ## 프로젝트 구성
 
-* cmd
-* config
-* internal
-* pkg
+* [cmd](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/cmd)
+* [config](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/config)
+* [internal](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/internal)
+* [pkg](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/pkg)
