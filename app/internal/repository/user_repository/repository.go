@@ -132,12 +132,63 @@ func (r *userRepository) CreateUser(input CreateUserInput) (int, error) {
 
 func (r *userRepository) SetUserLoginData(input SetUserLoginDataInput) error {
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
-
 		Table:  database.MYSQL_TABLE["user"],
 		Action: query_tool.DUPLICATE,
 		Set: map[string]any{
 			"email":    input.Email,
 			"password": input.Password,
+			"user_id":  input.UserId,
+		},
+		Duplicate: map[string]any{
+			"password": input.Password,
+		},
+	})
+	_, err := r.masterDB.QueryExecute(query, params...)
+	return err
+}
+
+func (r *userRepository) SetUserOauth(input SetUserOauthInput) error {
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userOauth"],
+		Action: query_tool.DUPLICATE,
+		Set: map[string]any{
+			"user_id":    input.UserId,
+			"oauth_id":   input.OauthId,
+			"oauth_host": input.OauthHost,
+		},
+		Duplicate: map[string]any{
+			"oauth_id":   input.OauthId,
+			"oauth_host": input.OauthHost,
+		},
+	})
+	_, err := r.masterDB.QueryExecute(query, params...)
+	return err
+}
+
+func (r *userRepository) SetUserInformation(input SetUserInformationInput) error {
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userInformation"],
+		Action: query_tool.DUPLICATE,
+		Set: map[string]any{
+			"user_id": input.UserId,
+			"email":   input.Email,
+			"name":    input.Name,
+		},
+		Duplicate: map[string]any{
+			"name": input.Name,
+		},
+	})
+	_, err := r.masterDB.QueryExecute(query, params...)
+	return err
+}
+
+func (r *userRepository) Authorization(input AuthorizationInput) error {
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userInformation"],
+		Action: query_tool.UPDATE,
+		Set: map[string]any{
+			"auth_type": input.AuthType,
+			"auth":      1,
 		},
 		Where: map[string]any{
 			"user_id": input.UserId,
@@ -147,24 +198,24 @@ func (r *userRepository) SetUserLoginData(input SetUserLoginDataInput) error {
 	return err
 }
 
-func (r *userRepository) SetUserOauth(input SetUserOauthInput) error {
-	// todo:  oauth 유저 데이터 세팅 구현
-	return nil
-}
-
-func (r *userRepository) SetUserInformation(input SetUserInformationInput) error {
-	// todo: 유저 정보 세팅 구현
-	return nil
-}
-
-func (r *userRepository) Authorization(input AuthorizationInput) error {
-	// todo: 유저 인증 세팅
-	return nil
-}
-
 func (r *userRepository) SetUserRefreshToken(input SetUserRefreshTokenInput) error {
-	// todo: 유저 refresh token 세팅
-	return nil
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userRefreshToken"],
+		Action: query_tool.DUPLICATE,
+		Set: map[string]any{
+			"user_id":    input.UserId,
+			"token":      input.Token,
+			"ip_addr":    input.IpAddr,
+			"expired_at": input.ExpiredAt,
+		},
+		Duplicate: map[string]any{
+			"token":      input.Token,
+			"ip_addr":    input.IpAddr,
+			"expired_at": input.ExpiredAt,
+		},
+	})
+	_, err := r.masterDB.QueryExecute(query, params...)
+	return err
 }
 
 func (r *userRepository) GetRefreshToken(token string) *GetRefreshTokenInput {
