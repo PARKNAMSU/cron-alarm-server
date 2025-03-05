@@ -10,4 +10,4 @@ RUN mv .aws ~/
 
 EXPOSE 8080
 
-CMD ["go","run","./cmd/main.go"]
+CMD ["go","run","./app/cmd/main.go"]
