@@ -10,15 +10,21 @@
 
 ### [user controller](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/controller/user_controller/user_controller.go)
 
+유저 정보 가져오기,추가,업데이트,인증,삭제 등 유저관련 요청을 처리
+
 </br>
 
 ## usecase
 
 ### [user usecase](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/usecase/user_usecase/user_usecase.go)
 
+유저관련 비즈니스 로적을 처리
+
 </br>
 
 ## repository
+
+유저 DB데이터를 처리(데이터 추가, 업데이트, 삭제, 조회)
 
 ### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go)
 * GetUser
