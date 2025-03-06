@@ -56,6 +56,9 @@ func GetMysqlMaster(isTransaction bool) *CustomDB {
 			isTransaction: isTransaction,
 		}
 		mysqlMasterDB.connect()
+		if isTransaction {
+			mysqlMasterDB.transaction()
+		}
 	}
 	return mysqlMasterDB
 }

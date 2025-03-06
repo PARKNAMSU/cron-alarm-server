@@ -98,7 +98,7 @@ func (c *CustomDB) Close() {
 	c.conn.Close()
 }
 
-func (c *CustomDB) Transaction() {
+func (c *CustomDB) transaction() {
 	if tx, err := c.conn.BeginTxx(context.TODO(), nil); err != nil {
 		fmt.Println("[err]:[setTransaction]:[", err.Error(), "]")
 		c.tx = tx

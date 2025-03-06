@@ -2,11 +2,13 @@ package user_repository
 
 import (
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/user_entity"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/root_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/query_tool"
 )
 
 type UserRepositoryImpl interface {
+	root_repository.RootRepositoryImpl
 	GetUser(input GetUserInput) *GetUserOutput
 	CreateUser(input CreateUserInput) (int, error)
 	SetUserLoginData(input SetUserLoginDataInput) error
@@ -20,8 +22,7 @@ type UserRepositoryImpl interface {
 }
 
 type userRepository struct {
-	masterDB *database.CustomDB
-	slaveDB  *database.CustomDB
+	root_repository.RootRepository
 }
 
 var (
@@ -30,10 +31,9 @@ var (
 
 func NewRepository(masterDB *database.CustomDB, slaveDB *database.CustomDB) UserRepositoryImpl {
 	if repo == nil {
-		repo = &userRepository{
-			masterDB: masterDB,
-			slaveDB:  slaveDB,
-		}
+		repo = &userRepository{}
+		repo.SetMasterDB(masterDB)
+		repo.SetSlaveDB(slaveDB)
 	}
 	return repo
 }
@@ -79,7 +79,7 @@ func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 		Where: where,
 	})
 
-	r.slaveDB.QuerySelect(
+	r.GetSlaveDB().QuerySelect(
 		&data,
 		query,
 		params...,
@@ -119,7 +119,7 @@ func (r *userRepository) CreateUser(input CreateUserInput) (int, error) {
 		},
 	})
 
-	result, err := r.masterDB.QueryExecute(query, params...)
+	result, err := r.GetMasterDB().QueryExecute(query, params...)
 
 	if err != nil {
 		return 0, nil
@@ -143,7 +143,7 @@ func (r *userRepository) SetUserLoginData(input SetUserLoginDataInput) error {
 			"password": input.Password,
 		},
 	})
-	_, err := r.masterDB.QueryExecute(query, params...)
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
 	return err
 }
 
@@ -161,7 +161,7 @@ func (r *userRepository) SetUserOauth(input SetUserOauthInput) error {
 			"oauth_host": input.OauthHost,
 		},
 	})
-	_, err := r.masterDB.QueryExecute(query, params...)
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
 	return err
 }
 
@@ -178,7 +178,7 @@ func (r *userRepository) SetUserInformation(input SetUserInformationInput) error
 			"name": input.Name,
 		},
 	})
-	_, err := r.masterDB.QueryExecute(query, params...)
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
 	return err
 }
 
@@ -194,7 +194,7 @@ func (r *userRepository) Authorization(input AuthorizationInput) error {
 			"user_id": input.UserId,
 		},
 	})
-	_, err := r.masterDB.QueryExecute(query, params...)
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
 	return err
 }
 
@@ -214,7 +214,7 @@ func (r *userRepository) SetUserRefreshToken(input SetUserRefreshTokenInput) err
 			"expired_at": input.ExpiredAt,
 		},
 	})
-	_, err := r.masterDB.QueryExecute(query, params...)
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
 	return err
 }
 
