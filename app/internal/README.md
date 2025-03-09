@@ -28,15 +28,27 @@
 
 ### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go)
 * GetUser
+    * 유저 전체 정보 가져오기 (select)
 * CreateUser
+    * 유저 index 테이블 유저 생성 (insert)
 * SetUserLoginData
+    * 유저 로그인 정보 생성 및 업데이트 (duplicate)
 * SetUserOauth
+    * 유저 oauth 정보 생성 및 업데이트 (duplicate)
 * SetUserInformation
+    * 유저 상세정보 생성 및 업데이트 (duplicate)
 * Authorization
+    * 유저 인증 (update)
 * SetUserRefreshToken
+    * 유저 갱신 토큰 생성 및 업데이트 (duplicate)
 * DeleteUser
+    * 유저 삭제상태로 업데이트 (update)
 * GetUserApiKey
+    * 유저 api key 가져오기 (select)
 * GetRefreshToken
+    * 유저 갱신 토큰 가져오기 (select)
+* SetUserApiKey
+    * 유저 api key 생성 및 업데이트 (duplicate)
 
 </br>
 
