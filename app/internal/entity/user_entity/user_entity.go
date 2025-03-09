@@ -9,7 +9,7 @@ import (
 type UserEntity struct { // table: user
 	Id     int    `db:"id"`
 	Method string `db:"method"` // normal: 일반 유저, oauth: 소셜 로그인 유저
-	Status int    `db:"status"`
+	Status int    `db:"status"` // 0: 탈퇴, 1: 정상, 2: 정지
 	IpAddr string `db:"ip_addr"`
 	common_entity.Timestamp
 }

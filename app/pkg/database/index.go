@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"reflect"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -136,6 +137,18 @@ func (c *CustomDB) QuerySelect(data any, query string, queryParams ...any) {
 	if c.isTransaction {
 		c.tx.Select(data, query, queryParams...)
 	}
+
+	if reflect.TypeOf(data).Kind() != reflect.Slice {
+		var list []any
+
+		c.conn.Select(&list, query, queryParams...)
+
+		if len(list) > 0 {
+			data = &list[0]
+		}
+		return
+	}
+
 	c.conn.Select(data, query, queryParams...)
 }
 

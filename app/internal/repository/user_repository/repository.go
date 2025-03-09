@@ -1,6 +1,8 @@
 package user_repository
 
 import (
+	"time"
+
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/user_entity"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/root_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
@@ -219,17 +221,77 @@ func (r *userRepository) SetUserRefreshToken(input SetUserRefreshTokenInput) err
 }
 
 func (r *userRepository) GetRefreshToken(token string) *GetRefreshTokenInput {
-	// todo: refresh token 가져오기
-	return nil
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userRefreshToken"],
+		Action: query_tool.SELECT,
+		Where: map[string]any{
+			"token": token,
+			"expired_at": query_tool.CompareColumn{
+				CompareType: query_tool.GREATER,
+				Value:       time.Now().Format("2006-01-02 15:04:05"),
+			},
+		},
+	})
+
+	var data *user_entity.UserRefreshTokenEntity
+	r.GetSlaveDB().QuerySelect(data, query, params...)
+
+	if data == nil {
+		return nil
+	}
+	return &GetRefreshTokenInput{
+		Token:  data.Token,
+		UserId: data.UserId,
+		Status: data.Status,
+		IpAddr: data.IpAddr,
+	}
 }
 
 func (r *userRepository) DeleteUser(input DeleteUserInput) error {
-	// todo: 유저 delete 세팅
-	return nil
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table: database.MYSQL_TABLE["user"],
+		Set:   map[string]any{"status": 0},
+		Where: map[string]any{"id": input.UserId},
+	})
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
+	return err
 }
 
 func (r *userRepository) GetUserApiKey(userId int) *string {
-	// todo: 유저 api key 가져오기
-	var key *string
-	return key
+	var key *user_entity.UserApiKeyEntity
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userApiKey"],
+		Action: query_tool.SELECT,
+		Where: map[string]any{
+			"user_id": userId,
+		},
+	})
+
+	r.GetSlaveDB().QuerySelect(key, query, params...)
+
+	if key == nil {
+		return nil
+	}
+
+	return &key.ApiKey
+}
+
+func (r *userRepository) SetUserApiKey(userId int, key string, expiredAt time.Time) error {
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userApiKey"],
+		Action: query_tool.DUPLICATE,
+		Set: map[string]any{
+			"user_id":    userId,
+			"api_key":    key,
+			"expired_at": expiredAt,
+		},
+		Duplicate: map[string]interface{}{
+			"api_key":    key,
+			"expired_at": expiredAt,
+		},
+	})
+
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
+
+	return err
 }

@@ -14,6 +14,7 @@ var (
 		"userOauth":        "user_oauth",
 		"userLoginData":    "user_login_data",
 		"userRefreshToken": "user_refresh_token",
+		"userApiKey":       "user_api_key",
 
 		"admin": "admin",
 
