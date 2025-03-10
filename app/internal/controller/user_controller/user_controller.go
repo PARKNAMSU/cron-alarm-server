@@ -22,7 +22,22 @@ func NewController(usecase user_usecase.UserUsecaseImpl) *UserController {
 	return controller
 }
 
+func (c *UserController) SignUp(ctx *fiber.Ctx) error {
+	body := ctx.Context().Value("body").(map[string]any)
+	input := user_usecase.SignUpInput{
+		Email:    body["email"].(string),
+		Password: body["password"].(string),
+		IpAddr:   ctx.IP(),
+	}
+	output, err := c.usecase.SignUp(input)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": err.Error()})
+	}
+	return ctx.JSON(fiber.Map{
+		"data": output,
+	})
+}
+
 func (c *UserController) SignIn(ctx *fiber.Ctx) error {
-	// todo : 회원가입 구현
 	return ctx.JSON(fiber.Map{"message": "success"})
 }

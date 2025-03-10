@@ -17,6 +17,7 @@ type SignUpOutput struct {
 type SignInInput struct {
 	Email    string
 	Password string
+	IpAddr   string
 }
 
 type SignInOutput struct {

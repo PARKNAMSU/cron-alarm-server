@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -83,5 +84,17 @@ func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
 		return errors.New("user api key not found")
 	}
 
+	return c.Next()
+}
+
+func (m *Middleware) BodyParsor(c *fiber.Ctx) error {
+	if len(c.Body()) == 0 {
+		return c.Next()
+	}
+
+	body := make(map[string]any)
+	json.Unmarshal(c.Body(), &body)
+
+	c.Context().SetUserValue("body", body)
 	return c.Next()
 }

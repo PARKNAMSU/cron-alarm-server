@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/di"
 	v1 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v1"
 	v2 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v2"
 )
@@ -27,6 +28,7 @@ var (
 			return nil
 		},
 	}
+	middleware = di.InitMiddleware()
 )
 
 func GetApp() *fiber.App {
@@ -42,6 +44,8 @@ func GetApp() *fiber.App {
 		c.Accepts("text/plain", "application/json") // "application/json", due to quality
 		return c.Next()
 	})
+
+	app.Use(middleware.BodyParsor)
 
 	app.Route("/api/v1", v1.Router())
 	app.Route("/api/v2", v2.Router())

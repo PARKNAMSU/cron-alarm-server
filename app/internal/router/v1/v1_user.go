@@ -8,6 +8,6 @@ import (
 func UserRouter() func(router fiber.Router) {
 	controller := di.InitUserController()
 	return func(router fiber.Router) {
-		router.Post("/signIn", controller.SignIn)
+		router.Post("/signUp", controller.SignUp)
 	}
 }

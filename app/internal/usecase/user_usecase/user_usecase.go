@@ -119,5 +119,66 @@ func (u *userUsecase) SignUp(input SignUpInput) (*SignUpOutput, error) {
 
 func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 	// todo: 로그인 구현
-	return nil, nil
+	user := u.userRepository.GetUser(user_repository.GetUserInput{
+		Email:         input.Email,
+		SelectKeyType: user_repository.GET_USER_KEY_EMAIL,
+	})
+
+	if user == nil {
+		return nil, errors.New("NOT_EXIST_USER")
+	}
+
+	decryptPassword, _ := encrypt_tool.Decrypt(*user.Password, config.USER_PASSWORD_ENCRYPT_KEY)
+
+	if input.Password != string(decryptPassword) {
+		return nil, errors.New("INVALID_PASSWORD")
+	}
+
+	output := &SignInOutput{}
+
+	output.Email = &input.Email
+	output.UserId = user.UserId
+	output.Method = user.Method
+	output.Status = user.Status
+	output.IpAddr = user.IpAddr
+	output.Name = user.Name
+	output.Auth = user.Auth
+	output.OauthId = user.OauthId
+	output.OauthHost = user.OauthHost
+	output.AuthType = user.AuthType
+	output.CreatedAt = user.CreatedAt
+	output.UpdatedAt = user.UpdatedAt
+
+	userData := global_type.UserTokenData{
+		Email:     &input.Email,
+		UserId:    user.UserId,
+		Method:    user.Method,
+		Status:    user.Status,
+		IpAddr:    user.IpAddr,
+		Name:      user.Name,
+		Auth:      user.Auth,
+		OauthId:   user.OauthId,
+		OauthHost: user.OauthHost,
+		AuthType:  user.AuthType,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	accessToken := jwt_tool.GenerateToken(userData, config.JWT_ACCESS_TOKEN_KEY, config.JWT_ACCESS_TOKEN_PERIOD)
+	refreshToken := jwt_tool.GenerateToken(userData, config.JWT_REFRESH_TOKEN_KEY, config.JWT_REFRESH_TOKEN_PERIOD)
+
+	if err := u.userRepository.SetUserRefreshToken(user_repository.SetUserRefreshTokenInput{
+		UserId:    user.UserId,
+		Token:     refreshToken,
+		IpAddr:    input.IpAddr,
+		ExpiredAt: time.Now().Add(config.JWT_REFRESH_TOKEN_PERIOD),
+	}); err != nil {
+		return nil, err
+	}
+
+	output.AccessToken = accessToken
+	output.RefreshToken = refreshToken
+	output.UserId = user.UserId
+
+	return output, nil
 }
