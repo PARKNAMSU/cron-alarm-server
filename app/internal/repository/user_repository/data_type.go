@@ -2,11 +2,14 @@ package user_repository
 
 import "time"
 
-type GetUserSelectKeyType uint8
+type SelectKeyType uint8
 
 var (
-	GET_USER_KEY_EMAIL GetUserSelectKeyType = 0
-	GET_USER_KEY_ID    GetUserSelectKeyType = 1
+	GET_USER_KEY_EMAIL SelectKeyType = 0
+	GET_USER_KEY_ID    SelectKeyType = 1
+
+	GET_USER_API_KEY_USER_ID SelectKeyType = 0
+	GET_USER_API_KEY_API_KEY SelectKeyType = 1
 )
 
 type CreateUserInput struct {
@@ -54,7 +57,7 @@ type GetRefreshTokenInput struct {
 type GetUserInput struct {
 	UserId        uint
 	Email         string
-	SelectKeyType GetUserSelectKeyType
+	SelectKeyType SelectKeyType
 }
 
 type GetUserOutput struct {
@@ -75,4 +78,15 @@ type GetUserOutput struct {
 
 type DeleteUserInput struct {
 	UserId int
+}
+
+type GetUserApiKeyInput struct {
+	UserId     *int
+	ApiKey     *string
+	SearchType SelectKeyType
+}
+
+type GetUserApiKeyOutput struct {
+	UserId int
+	ApiKey string
 }

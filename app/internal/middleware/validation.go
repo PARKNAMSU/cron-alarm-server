@@ -32,7 +32,6 @@ func NewMiddleware(userRepository user_repository.UserRepositoryImpl) *Middlewar
 
 // 유저 검증 미들웨어
 func (m *Middleware) UserValidation(c *fiber.Ctx) error {
-	headerApiKey := c.Get("x-api-key")
 	accessToken := c.Get("access-token")
 	refreshToken := c.Get("refresh-token")
 
@@ -53,23 +52,36 @@ func (m *Middleware) UserValidation(c *fiber.Ctx) error {
 		}
 	}
 
-	key := m.userRepository.GetUserApiKey(userData.UserId)
-
-	if key == nil {
-		return errors.New("user api key not found")
-	}
-
-	userKeyBytes, _ := encrypt_tool.Decrypt(*key, config.USER_API_ENCRYPT_KEY)
-	requestBytes, _ := encrypt_tool.Decrypt(headerApiKey, config.USER_API_ENCRYPT_KEY)
-
-	if string(userKeyBytes) != string(requestBytes) {
-		return errors.New("invalid api key")
-	}
-
 	c.Response().Header.Set("access-token", accessToken)
 	c.Response().Header.Set("refresh-token", refreshToken)
 
 	c.Context().SetUserValue("userData", userData)
+
+	return c.Next()
+}
+
+func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
+	headerKey := c.Get("x-api-key", "")
+
+	if headerKey == "" {
+		return errors.New("api key not exist")
+	}
+
+	decryptKey, err := encrypt_tool.Decrypt(headerKey, config.USER_API_ENCRYPT_KEY)
+	headerKey = string(decryptKey)
+
+	if err != nil {
+		return err
+	}
+
+	key := m.userRepository.GetUserApiKey(user_repository.GetUserApiKeyInput{
+		SearchType: user_repository.GET_USER_API_KEY_API_KEY,
+		ApiKey:     &headerKey,
+	})
+
+	if key == nil {
+		return errors.New("user api key not found")
+	}
 
 	return c.Next()
 }

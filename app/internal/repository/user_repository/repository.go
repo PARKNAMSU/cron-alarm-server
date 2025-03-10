@@ -19,7 +19,7 @@ type UserRepositoryImpl interface {
 	Authorization(input AuthorizationInput) error
 	SetUserRefreshToken(input SetUserRefreshTokenInput) error
 	DeleteUser(input DeleteUserInput) error
-	GetUserApiKey(userId int) *string
+	GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyOutput
 	GetRefreshToken(token string) *GetRefreshTokenInput
 }
 
@@ -257,14 +257,23 @@ func (r *userRepository) DeleteUser(input DeleteUserInput) error {
 	return err
 }
 
-func (r *userRepository) GetUserApiKey(userId int) *string {
+func (r *userRepository) GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyOutput {
 	var key *user_entity.UserApiKeyEntity
+
+	where := map[string]any{}
+
+	if input.SearchType == GET_USER_API_KEY_USER_ID {
+		where["user_id"] = *input.UserId
+	} else if input.SearchType == GET_USER_API_KEY_API_KEY {
+		where["api_key"] = *input.ApiKey
+	} else {
+		return nil
+	}
+
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
 		Table:  database.MYSQL_TABLE["userApiKey"],
 		Action: query_tool.SELECT,
-		Where: map[string]any{
-			"user_id": userId,
-		},
+		Where:  where,
 	})
 
 	r.GetSlaveDB().QuerySelect(key, query, params...)
@@ -273,7 +282,10 @@ func (r *userRepository) GetUserApiKey(userId int) *string {
 		return nil
 	}
 
-	return &key.ApiKey
+	return &GetUserApiKeyOutput{
+		UserId: key.UserId,
+		ApiKey: key.ApiKey,
+	}
 }
 
 func (r *userRepository) SetUserApiKey(userId int, key string, expiredAt time.Time) error {

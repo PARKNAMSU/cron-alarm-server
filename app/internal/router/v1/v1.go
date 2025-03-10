@@ -8,5 +8,6 @@ func Router() func(router fiber.Router) {
 	return func(router fiber.Router) {
 		router.Route("/sample", SampleV1Router())
 		router.Route("/user", UserRouter())
+		router.Route("/open", OpenRouter())
 	}
 }
