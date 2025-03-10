@@ -52,6 +52,13 @@
 
 </br>
 
+### [log repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/log_repository/repository.go)
+
+</br>
+
+### [stat repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/stat_repository/repository.go)
+
+
 ## entity
 
 ### user entity
