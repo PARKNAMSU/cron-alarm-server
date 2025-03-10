@@ -13,6 +13,8 @@ import (
 )
 
 type UserUsecaseImpl interface {
+	SignUp(input SignUpInput) (*SignUpOutput, error)
+	SignIn(input SignInInput) (*SignInOutput, error)
 }
 
 type userUsecase struct {
@@ -32,7 +34,7 @@ func NewUsecase(userRepo user_repository.UserRepositoryImpl) UserUsecaseImpl {
 	return usecase
 }
 
-func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
+func (u *userUsecase) SignUp(input SignUpInput) (*SignUpOutput, error) {
 	user := u.userRepository.GetUser(user_repository.GetUserInput{
 		Email:         input.Email,
 		SelectKeyType: user_repository.GET_USER_KEY_EMAIL,
@@ -42,7 +44,7 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 		return nil, errors.New("EXIST_USER")
 	}
 
-	output := &SignInOutput{}
+	output := &SignUpOutput{}
 	userData := global_type.UserTokenData{
 		Email: &input.Email,
 	}
@@ -101,9 +103,21 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 		return nil, err
 	}
 
-	return &SignInOutput{
-		UserId:       output.UserId,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}, nil
+	output.AccessToken = accessToken
+	output.RefreshToken = refreshToken
+	output.Auth = userData.Auth
+	output.AuthType = userData.AuthType
+	output.Email = userData.Email
+	output.IpAddr = userData.IpAddr
+	output.Method = userData.Method
+	output.Name = userData.Name
+	output.CreatedAt = userData.CreatedAt
+	output.UpdatedAt = userData.UpdatedAt
+
+	return output, nil
+}
+
+func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
+	// todo: 로그인 구현
+	return nil, nil
 }
