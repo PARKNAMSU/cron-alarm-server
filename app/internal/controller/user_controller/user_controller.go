@@ -39,5 +39,18 @@ func (c *UserController) SignUp(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) SignIn(ctx *fiber.Ctx) error {
-	return ctx.JSON(fiber.Map{"message": "success"})
+	body := ctx.Context().Value("body").(map[string]any)
+	input := user_usecase.SignInInput{
+		Email:    body["email"].(string),
+		Password: body["password"].(string),
+		IpAddr:   ctx.IP(),
+	}
+
+	output, err := c.usecase.SignIn(input)
+
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": err.Error()})
+	}
+
+	return ctx.JSON(fiber.Map{"data": output})
 }

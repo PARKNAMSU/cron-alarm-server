@@ -24,9 +24,10 @@
 
 ## repository
 
+### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go)
+
 유저 DB데이터를 처리(데이터 추가, 업데이트, 삭제, 조회)
 
-### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go)
 * GetUser
     * 유저 전체 정보 가져오기 (select)
 * CreateUser
@@ -73,18 +74,27 @@
 
 ## middleware
 
-### [user validation middleware](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/middleware/validation.go)
+인증 및 검증 등 API 호출 전 수행되어야 하는 미들웨어 목록
 
-JWT 토큰과 API 키를 검증하여 사용자 인증을 수행하는 미들웨어.
+### [UserValidation](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/middleware/middleware.go)
+
+JWT 토큰을 검증하여 사용자 인증을 수행하는 미들웨어.
 이를 통해 유효한 사용자만 API 요청을 수행할 수 있도록 보호
 
 1. 요청 헤더에서 필요한 정보를 추출
-    * `x-api-key`: 유저 개인별 API 키
     * `access-token`: 접근 JWT 토큰
     * `refresh-token`: 갱신 JWT 토큰 
 2. JWT 토큰 검증
     * 접근토큰 검증후 성공시 다음 로직 진행
     * 실패 시 전달받은 갱신토큰이 존재하는지 DB 검색 
     * 해당 토큰이 유효한경우 접근토큰 갱신 진행
-3. API 키 검증
-4. 이후의 로직에서 사용할 수 있게 사용자 데이터를 컨텍스트에 저장
+3. 이후의 로직에서 사용할 수 있게 사용자 데이터를 컨텍스트에 저장
+
+### [APIKeyValidation](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/middleware/middleware.go)
+
+외부 사이트에서 해당 서버의 오픈 API 를 사용할 수 있는 API KEY를 검증
+
+1. 요청 헤더에서 필요한 정보를 추출
+    * `x-api-key`: 암호화된 API 키
+2. API 키 복호화
+3. 복호화 한 API 키를 이용하여 해당 키가 존재하는 키 여부를 확인

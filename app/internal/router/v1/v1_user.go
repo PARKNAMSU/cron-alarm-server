@@ -2,12 +2,24 @@ package v1
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/di"
+	"nspark-cron-alarm.com/cron-alarm-server/app/config"
 )
 
 func UserRouter() func(router fiber.Router) {
-	controller := di.InitUserController()
 	return func(router fiber.Router) {
-		router.Post("/signUp", controller.SignUp)
+		router.Post(
+			"/signUp",
+			middleware.BodyValidator("email", config.REQUEST_DATA_TYPE_STRING),
+			middleware.BodyValidator("password", config.REQUEST_DATA_TYPE_STRING),
+			userController.SignUp,
+		)
+
+		router.Post(
+			"/signIn",
+			middleware.BodyValidator("email", config.REQUEST_DATA_TYPE_STRING),
+			middleware.BodyValidator("password", config.REQUEST_DATA_TYPE_STRING),
+			userController.SignIn,
+		)
+
 	}
 }

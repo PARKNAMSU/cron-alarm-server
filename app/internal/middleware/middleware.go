@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"errors"
+	"reflect"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -97,4 +98,60 @@ func (m *Middleware) BodyParsor(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue("body", body)
 	return c.Next()
+}
+
+func (m *Middleware) BodyValidator(key string, dataType config.REQUEST_DATA_TYPE) func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		err := c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "invalid body",
+			"code":    "INVALID-BODY",
+		})
+		if len(c.Body()) == 0 {
+			return err
+		}
+		var body map[string]any
+		bodyErr := json.Unmarshal(c.Body(), &body)
+
+		if bodyErr != nil {
+			return err
+		}
+
+		validation := false
+
+		bodyData, ok := body[key]
+
+		if !ok {
+			return err
+		}
+
+		switch dataType {
+		case config.REQUEST_DATA_TYPE_BOOL:
+			validation =
+				reflect.TypeOf(bodyData).Kind() == reflect.Bool
+		case config.REQUEST_DATA_TYPE_INT:
+			validation =
+				reflect.TypeOf(bodyData).Kind() == reflect.Int ||
+					reflect.TypeOf(bodyData).Kind() == reflect.Int8 ||
+					reflect.TypeOf(bodyData).Kind() == reflect.Int16 ||
+					reflect.TypeOf(bodyData).Kind() == reflect.Int32 ||
+					reflect.TypeOf(bodyData).Kind() == reflect.Int64
+		case config.REQUEST_DATA_TYPE_FLOAT:
+			validation =
+				reflect.TypeOf(body[key]).Kind() == reflect.Float32 ||
+					reflect.TypeOf(body[key]).Kind() == reflect.Float64
+		case config.REQUEST_DATA_TYPE_SLICE:
+			validation =
+				reflect.TypeOf(body[key]).Kind() == reflect.Slice
+		case config.REQUEST_DATA_TYPE_STRING:
+			validation =
+				reflect.TypeOf(body[key]).Kind() == reflect.String
+		case "":
+			validation = true
+		}
+
+		if !validation {
+			return err
+		}
+		return c.Next()
+	}
 }
