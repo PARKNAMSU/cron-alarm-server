@@ -98,3 +98,11 @@ JWT 토큰을 검증하여 사용자 인증을 수행하는 미들웨어.
     * `x-api-key`: 암호화된 API 키
 2. API 키 복호화
 3. 복호화 한 API 키를 이용하여 해당 키가 존재하는 키 여부를 확인
+
+### [BodyParsor](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/middleware/middleware.go)
+
+bite 형태로 구성되어 있는 request body 데이터를 이후 로직에서 편리하게 사용 가능할 수 있게 map 타입으로 변경 
+
+### [BodyValidator](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/middleware/middleware.go)
+
+body key 와 data type 을 넘겨받아 해당 데이터 존재 여부와 타입 검증 진행
