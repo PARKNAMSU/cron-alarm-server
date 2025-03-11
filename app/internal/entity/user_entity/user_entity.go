@@ -63,8 +63,10 @@ type UserRefreshTokenEntity struct { // table: user_refresh_token
 }
 
 type UserApiKeyEntity struct { // table: user_api_key
-	UserId    int    `db:"user_id"`
 	ApiKey    string `db:"api_key"`
+	Status    int    `db:"status"`   // 1: 사용 가능, 0: 사용 중지
+	Hostname  string `db:"hostname"` // 해당 키를 사용하는 호스트 이름
+	UserId    int    `db:"user_id"`
 	ExpiredAt string `db:"expired_at"`
 	common_entity.Timestamp
 }

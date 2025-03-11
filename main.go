@@ -1,25 +1,11 @@
 package main
 
 import (
-	"fmt"
-
-	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/encrypt_tool"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/joho/godotenv/autoload"
+	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/mail_tool"
 )
 
 func main() {
-	data := "aaaa"
-
-	s := "aaaaaaa"
-
-	a, _ := encrypt_tool.Encrypt([]byte(data), s)
-
-	b, _ := encrypt_tool.Encrypt([]byte(data), s)
-
-	ad, _ := encrypt_tool.Decrypt(a, s)
-
-	bd, _ := encrypt_tool.Decrypt(b, s)
-
-	fmt.Println(string(ad))
-	fmt.Println(string(bd))
-
+	mail_tool.SendMail("skatn7979@gmail.com", "test123")
 }
