@@ -68,7 +68,7 @@ func (c *CustomDB) connect() {
 	)
 
 	if err != nil {
-		log.Println(err.Error())
+		log.Panicln(err.Error())
 		return
 	}
 
