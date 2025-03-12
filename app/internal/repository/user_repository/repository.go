@@ -260,7 +260,12 @@ func (r *userRepository) DeleteUser(input DeleteUserInput) error {
 func (r *userRepository) GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyOutput {
 	var key *user_entity.UserApiKeyEntity
 
-	where := map[string]any{}
+	where := map[string]any{
+		"expired_at": query_tool.CompareColumn{
+			CompareType: query_tool.GREATER,
+			Value:       time.Now().Format("2006-01-02 15:04:05"),
+		},
+	}
 
 	if input.SearchType == GET_USER_API_KEY_USER_ID {
 		where["user_id"] = *input.UserId
@@ -283,8 +288,10 @@ func (r *userRepository) GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyO
 	}
 
 	return &GetUserApiKeyOutput{
-		UserId: key.UserId,
-		ApiKey: key.ApiKey,
+		UserId:   key.UserId,
+		ApiKey:   key.ApiKey,
+		Hostname: key.Hostname,
+		Status:   key.Status,
 	}
 }
 

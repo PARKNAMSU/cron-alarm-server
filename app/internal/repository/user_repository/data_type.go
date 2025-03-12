@@ -87,6 +87,8 @@ type GetUserApiKeyInput struct {
 }
 
 type GetUserApiKeyOutput struct {
-	UserId int
-	ApiKey string
+	UserId   int
+	ApiKey   string
+	Status   int
+	Hostname string
 }

@@ -17,7 +17,9 @@ type AlarmMethod struct {
 }
 
 type EmailAlarmInformation struct {
-	ApiKey  string `db:"api_key"` // pk
-	ToEmail string `db:"to_email"`
+	ApiKey     string `db:"api_key"` // pk
+	ToEmail    string `db:"to_email"`
+	Title      string `db:"title"`
+	CustomForm string `db:"custom_form"`
 	common_entity.Timestamp
 }

@@ -2,6 +2,7 @@ package user_entity
 
 import (
 	"database/sql"
+	"time"
 
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/common_entity"
 )
@@ -63,10 +64,19 @@ type UserRefreshTokenEntity struct { // table: user_refresh_token
 }
 
 type UserApiKeyEntity struct { // table: user_api_key
-	ApiKey    string `db:"api_key"`
-	Status    int    `db:"status"`   // 1: 사용 가능, 0: 사용 중지
-	Hostname  string `db:"hostname"` // 해당 키를 사용하는 호스트 이름
-	UserId    int    `db:"user_id"`
-	ExpiredAt string `db:"expired_at"`
+	ApiKey    string    `db:"api_key"`
+	Status    int       `db:"status"`   // 1: 사용 가능, 0: 사용 중지
+	Hostname  string    `db:"hostname"` // 해당 키를 사용하는 호스트 이름
+	UserId    int       `db:"user_id"`
+	ExpiredAt time.Time `db:"expired_at"`
+	common_entity.Timestamp
+}
+
+type UserAuthCodeEntity struct { // table: user_auth_code
+	UserId    int       `db:"user_id"`
+	Email     string    `db:"email"` // unique
+	Code      int       `db:"code"`
+	Status    int       `db:"status"` // 0: 인증 전, 1: 인증 완료
+	ExpiredAt time.Time `db:"expired_at"`
 	common_entity.Timestamp
 }

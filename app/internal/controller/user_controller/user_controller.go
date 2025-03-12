@@ -54,3 +54,25 @@ func (c *UserController) SignIn(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{"data": output})
 }
+
+func (c *UserController) Authorization(ctx *fiber.Ctx) error {
+	// userData, isExist := ctx.Context().Value("userData").(global_type.UserTokenData)
+	// if !isExist {
+	// 	return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+	// 		"message": "invalid user token",
+	// 		"code":    "INVALID-USER-TOKEN",
+	// 	})
+	// }
+	// todo : 계정 인증 로직 추가
+	return ctx.JSON(fiber.Map{"data": "success"})
+}
+
+func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {
+	// todo : 인증 코드 로직 추가
+	return ctx.JSON(fiber.Map{"data": "success"})
+}
+
+func (c *UserController) ApiKeyIssue(ctx *fiber.Ctx) error {
+	// todo : api key 발급 로직 추가
+	return ctx.JSON(fiber.Map{"data": "success"})
+}

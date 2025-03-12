@@ -19,7 +19,8 @@ smtp 이메일 전송 툴
     * parameters 
         * `title` (string) : 이메일 제목 
         * `body` (string) : 전송할 내용
-* SendMail - 이메일 전송 함수
+        * `path` (string) : 템플릿 경로
+* SendAlarmMail - 알람 이메일 전송 함수
     * parameters
         * `to` (string) : 전송할 이메일 주소
         * `msg` (string) : 전송할 메서지

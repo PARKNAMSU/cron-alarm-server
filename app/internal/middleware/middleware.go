@@ -43,7 +43,10 @@ func (m *Middleware) UserValidation(c *fiber.Ctx) error {
 		tokenData := m.userRepository.GetRefreshToken(refreshToken)
 
 		if tokenData == nil || tokenData.Status == 0 {
-			return errors.New("invalid refresh token")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "invalid user token",
+				"code":    "INVALID-USER-TOKEN",
+			})
 		}
 
 		userData, err = jwt_tool.GetData[global_type.UserTokenData](refreshToken, config.JWT_REFRESH_TOKEN_KEY)
@@ -83,6 +86,10 @@ func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
 
 	if key == nil {
 		return errors.New("user api key not found")
+	}
+
+	if key.Status != 1 || key.Hostname != c.Hostname() {
+		return errors.New("invalid api key")
 	}
 
 	return c.Next()

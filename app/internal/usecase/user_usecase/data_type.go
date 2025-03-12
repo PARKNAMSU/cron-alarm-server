@@ -25,3 +25,15 @@ type SignInOutput struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
+
+type AuthorizationInput struct{}
+
+type AuthorizationOutput struct{}
+
+type AuthCodeSendInput struct{}
+
+type AuthCodeSendOutput struct{}
+
+type ApiKeyIssueInput struct{}
+
+type ApiKeyIssueOutput struct{}

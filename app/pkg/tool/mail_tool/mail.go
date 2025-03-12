@@ -14,9 +14,9 @@ func encodeBase64(input string) string {
 	return base64.StdEncoding.EncodeToString([]byte(input))
 }
 
-func readTemplate(title string, body string) string {
-	path, _ := os.Getwd()
-	template, err := os.ReadFile(path + "/template/email.html")
+func readTemplate(title string, body string, path string) string {
+	root, _ := os.Getwd()
+	template, err := os.ReadFile(root + path)
 	if err != nil {
 		log.Println(path)
 		return ""
@@ -28,7 +28,7 @@ func readTemplate(title string, body string) string {
 	return encodeBase64(templateStr)
 }
 
-func SendMail(to string, msg string, title string) error {
+func SendAlarmMail(to string, msg string, title string) error {
 	headers := fmt.Sprintf(
 		`From: %s
 To: %s
@@ -40,7 +40,7 @@ Content-Transfer-Encoding: base64`+"\n",
 		encodeBase64(title),
 	)
 
-	body := readTemplate(title, msg) + "\r"
+	body := readTemplate(title, msg, "/template/alarm_email.html") + "\r"
 	msgByte := []byte(strings.Join([]string{headers, body}, "\n"))
 
 	err := smtp.SendMail(

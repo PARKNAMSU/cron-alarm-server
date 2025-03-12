@@ -15,6 +15,9 @@ import (
 type UserUsecaseImpl interface {
 	SignUp(input SignUpInput) (*SignUpOutput, error)
 	SignIn(input SignInInput) (*SignInOutput, error)
+	Authorization(input AuthorizationInput) (AuthorizationOutput, error)
+	AuthCodeSend(input AuthCodeSendInput) AuthCodeSendOutput
+	ApiKeyIssue(input ApiKeyIssueInput) ApiKeyIssueOutput
 }
 
 type userUsecase struct {
@@ -181,4 +184,19 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 	output.UserId = user.UserId
 
 	return output, nil
+}
+
+func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutput, error) {
+	// todo : 계정 인증 로직 추가
+	return AuthorizationOutput{}, nil
+}
+
+func (u *userUsecase) AuthCodeSend(input AuthCodeSendInput) AuthCodeSendOutput {
+	// todo : 인증 코드 전송 로직 추가
+	return AuthCodeSendOutput{}
+}
+
+func (u *userUsecase) ApiKeyIssue(input ApiKeyIssueInput) ApiKeyIssueOutput {
+	// todo : API 키 발급 로직 추가
+	return ApiKeyIssueOutput{}
 }
