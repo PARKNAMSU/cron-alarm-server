@@ -5,15 +5,16 @@ import (
 	"log"
 	"net/smtp"
 	"os"
+	"strings"
 )
 
 func SendMail(to string, msg string) error {
 	fmt.Println(os.Getenv("MAIL_EMAIL"))
 	fmt.Println(os.Getenv("MAIL_PASSWORD"))
-	headerSubject := "Subject: 테스트\r\n"
-	headerBlank := "\r\n"
-	body := "메일 테스트입니다\r\n"
-	msgByte := []byte(headerSubject + headerBlank + body)
+	fromMsg := "From: " + os.Getenv("MAIL_EMAIL") + "\r"
+	toMsg := "To: " + to + "\r"
+	body := msg + "\r"
+	msgByte := []byte(strings.Join([]string{fromMsg, toMsg, body}, "\n"))
 
 	err := smtp.SendMail(
 		"smtp.naver.com:587",
