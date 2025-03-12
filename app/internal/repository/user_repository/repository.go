@@ -297,7 +297,7 @@ func (r *userRepository) SetUserApiKey(userId int, key string, expiredAt time.Ti
 			"api_key":    key,
 			"expired_at": expiredAt,
 		},
-		Duplicate: map[string]interface{}{
+		Duplicate: map[string]any{
 			"api_key":    key,
 			"expired_at": expiredAt,
 		},

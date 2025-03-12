@@ -1,6 +1,7 @@
 package mail_tool
 
 import (
+	"encoding/base64"
 	"fmt"
 	"log"
 	"net/smtp"
@@ -8,13 +9,39 @@ import (
 	"strings"
 )
 
-func SendMail(to string, msg string) error {
-	fmt.Println(os.Getenv("MAIL_EMAIL"))
-	fmt.Println(os.Getenv("MAIL_PASSWORD"))
-	fromMsg := "From: " + os.Getenv("MAIL_EMAIL") + "\r"
-	toMsg := "To: " + to + "\r"
-	body := msg + "\r"
-	msgByte := []byte(strings.Join([]string{fromMsg, toMsg, body}, "\n"))
+// Base64 인코딩 함수
+func encodeBase64(input string) string {
+	return base64.StdEncoding.EncodeToString([]byte(input))
+}
+
+func readTemplate(title string, body string) string {
+	path, _ := os.Getwd()
+	template, err := os.ReadFile(path + "/template/email.html")
+	if err != nil {
+		log.Println(path)
+		return ""
+	}
+
+	templateStr := strings.Replace(string(template), "${body}", body, -1)
+	templateStr = strings.Replace(templateStr, "${title}", title, -1)
+
+	return encodeBase64(templateStr)
+}
+
+func SendMail(to string, msg string, title string) error {
+	headers := fmt.Sprintf(
+		`From: %s
+To: %s
+Subject: =?UTF-8?B?%s?=
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64`+"\n",
+		os.Getenv("MAIL_EMAIL"),
+		to,
+		encodeBase64(title),
+	)
+
+	body := readTemplate(title, msg) + "\r"
+	msgByte := []byte(strings.Join([]string{headers, body}, "\n"))
 
 	err := smtp.SendMail(
 		"smtp.naver.com:587",

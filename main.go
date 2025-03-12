@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	// mail_tool.SendMail("skatn7979@gmail.com", "test123")
+	// mail_tool.SendMail("skatn7979@gmail.com", "{error:'internal server error'}", "abc 배치 작업 오류")
 }
