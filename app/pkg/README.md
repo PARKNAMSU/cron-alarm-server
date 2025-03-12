@@ -8,7 +8,7 @@
 
 프로젝트에서 사용할 툴 목록
 
-### mail tool
+### [mail tool](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/pkg/tool/mail_tool/mail.go)
 
 smtp 이메일 전송 툴
 
