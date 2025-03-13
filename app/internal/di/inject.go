@@ -3,6 +3,7 @@ package di
 import (
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/controller/user_controller"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/middleware"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/log_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/usecase/user_usecase"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
@@ -17,10 +18,14 @@ var ( // db 객체 초기화
 
 var ( // repo 객체 초기화
 	userRepository = user_repository.NewRepository(masterDB, slaveDB)
+	logRepositroy  = log_repository.NewRepository(masterDB, slaveDB)
 )
 
 var ( // usecase 객체 초기화
-	userUsecase = user_usecase.NewUsecase(userRepository)
+	userUsecase = user_usecase.NewUsecase(
+		userRepository,
+		logRepositroy,
+	)
 )
 
 func InitUserController() *user_controller.UserController {

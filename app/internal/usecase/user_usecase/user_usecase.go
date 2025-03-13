@@ -6,32 +6,36 @@ import (
 
 	"nspark-cron-alarm.com/cron-alarm-server/app/config"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/global_type"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/log_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/common_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/encrypt_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/jwt_tool"
+	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/mail_tool"
 )
 
 type UserUsecaseImpl interface {
 	SignUp(input SignUpInput) (*SignUpOutput, error)
 	SignIn(input SignInInput) (*SignInOutput, error)
 	Authorization(input AuthorizationInput) (AuthorizationOutput, error)
-	AuthCodeSend(input AuthCodeSendInput) AuthCodeSendOutput
+	AuthCodeSend(input AuthCodeSendInput) (AuthCodeSendOutput, error)
 	ApiKeyIssue(input ApiKeyIssueInput) ApiKeyIssueOutput
 }
 
 type userUsecase struct {
 	userRepository user_repository.UserRepositoryImpl
+	logRepository  log_repository.LogRepositoryImpl
 }
 
 var (
 	usecase *userUsecase
 )
 
-func NewUsecase(userRepo user_repository.UserRepositoryImpl) UserUsecaseImpl {
+func NewUsecase(userRepo user_repository.UserRepositoryImpl, logRepo log_repository.LogRepositoryImpl) UserUsecaseImpl {
 	if usecase == nil {
 		usecase = &userUsecase{
 			userRepository: userRepo,
+			logRepository:  logRepo,
 		}
 	}
 	return usecase
@@ -187,13 +191,103 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 }
 
 func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutput, error) {
-	// todo : 계정 인증 로직 추가
+	authCode := u.userRepository.GetAvailableAuthCode(input.UserId, "auth")
+
+	if authCode == nil {
+		return AuthorizationOutput{}, errors.New("INVALID-CODE")
+	}
+
+	errors := common_tool.ParallelExec(
+		func() error {
+			return u.userRepository.Authorization(user_repository.AuthorizationInput{
+				UserId:   input.UserId,
+				AuthType: authCode.AuthType,
+			})
+		},
+		func() error {
+			return u.userRepository.SetUserAuthCode(user_repository.SetAuthCodeInput{
+				UserId:         input.UserId,
+				ReceiveAccount: authCode.ReceiveAccount,
+				Action:         authCode.Action,
+				Status:         1,
+			})
+		},
+		func() error {
+			return u.logRepository.InsertLogUserAuthCode(log_repository.InsertLogUserAuthCodeInput{
+				UserId:         input.UserId,
+				ReceiveAccount: authCode.ReceiveAccount,
+				Action:         "auth",
+				AuthType:       authCode.AuthType,
+				Code:           input.Code,
+				Status:         1,
+				IpAddr:         input.IpAddr,
+			})
+		},
+	)
+
+	if len(errors) > 0 {
+		u.userRepository.Rollback()
+		u.logRepository.Rollback()
+		return AuthorizationOutput{}, errors[0]
+	}
+
+	u.userRepository.Commit()
+	u.logRepository.Commit()
+
 	return AuthorizationOutput{}, nil
 }
 
-func (u *userUsecase) AuthCodeSend(input AuthCodeSendInput) AuthCodeSendOutput {
-	// todo : 인증 코드 전송 로직 추가
-	return AuthCodeSendOutput{}
+func (u *userUsecase) AuthCodeSend(input AuthCodeSendInput) (AuthCodeSendOutput, error) {
+	code, _ := common_tool.RandomString(8)
+	expiredAt := time.Now().Add(time.Minute * 5)
+
+	switch input.AuthType {
+	case "email":
+		{
+			emailErr := mail_tool.SendAlarmMail(input.ReceiveAccount, code, "계정 인증 코드🔑")
+			if emailErr != nil {
+				return AuthCodeSendOutput{}, emailErr
+			}
+		}
+	default:
+		return AuthCodeSendOutput{}, errors.New("INVALID-AUTH-TYPE")
+	}
+
+	errors := common_tool.ParallelExec(
+		func() error {
+			return u.userRepository.SetUserAuthCode(user_repository.SetAuthCodeInput{
+				UserId:         input.UserId,
+				ReceiveAccount: input.ReceiveAccount,
+				AuthType:       input.AuthType,
+				Code:           code,
+				Action:         "auth",
+				ExpiredAt:      expiredAt,
+				Status:         0,
+			})
+		},
+		func() error {
+			return u.logRepository.InsertLogUserAuthCode(log_repository.InsertLogUserAuthCodeInput{
+				UserId:         input.UserId,
+				ReceiveAccount: input.ReceiveAccount,
+				Action:         "auth",
+				AuthType:       input.AuthType,
+				Code:           code,
+				Status:         0,
+				IpAddr:         input.IpAddr,
+			})
+		},
+	)
+
+	if len(errors) > 0 {
+		u.userRepository.Rollback()
+		u.logRepository.Rollback()
+		return AuthCodeSendOutput{}, errors[0]
+	}
+
+	u.userRepository.Commit()
+	u.logRepository.Commit()
+
+	return AuthCodeSendOutput{}, nil
 }
 
 func (u *userUsecase) ApiKeyIssue(input ApiKeyIssueInput) ApiKeyIssueOutput {

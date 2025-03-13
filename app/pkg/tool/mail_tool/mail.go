@@ -61,3 +61,37 @@ Content-Transfer-Encoding: base64`+"\n",
 	}
 	return nil
 }
+
+func SendCodeMail(to string, code string, title string) error {
+	headers := fmt.Sprintf(
+		`From: %s
+To: %s
+Subject: =?UTF-8?B?%s?=
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64`+"\n",
+		os.Getenv("MAIL_EMAIL"),
+		to,
+		encodeBase64(title),
+	)
+
+	body := readTemplate(title, code, "/template/code_email.html") + "\r"
+	msgByte := []byte(strings.Join([]string{headers, body}, "\n"))
+
+	err := smtp.SendMail(
+		"smtp.naver.com:587",
+		smtp.PlainAuth(
+			"",
+			os.Getenv("MAIL_EMAIL"),
+			os.Getenv("MAIL_PASSWORD"),
+			"smtp.naver.com",
+		),
+		os.Getenv("MAIL_EMAIL"),
+		[]string{to},
+		msgByte,
+	)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}

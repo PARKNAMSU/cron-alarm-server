@@ -26,13 +26,24 @@ type SignInOutput struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
-type AuthorizationInput struct{}
+type AuthorizationInput struct {
+	UserId int
+	Code   string
+	IpAddr string
+}
 
 type AuthorizationOutput struct{}
 
-type AuthCodeSendInput struct{}
+type AuthCodeSendInput struct {
+	UserId         int
+	ReceiveAccount string
+	AuthType       string
+	IpAddr         string
+}
 
-type AuthCodeSendOutput struct{}
+type AuthCodeSendOutput struct {
+	Message string `json:"message"`
+}
 
 type ApiKeyIssueInput struct{}
 

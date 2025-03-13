@@ -327,6 +327,7 @@ func (r *userRepository) SetUserAuthCode(input SetAuthCodeInput) error {
 		set = map[string]any{
 			"user_id":         input.UserId,
 			"receive_account": input.ReceiveAccount,
+			"action":          input.Action,
 			"status":          input.Status,
 		}
 		duplicate = map[string]any{
