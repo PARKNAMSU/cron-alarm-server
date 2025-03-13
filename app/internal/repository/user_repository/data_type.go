@@ -92,3 +92,22 @@ type GetUserApiKeyOutput struct {
 	Status   int
 	Hostname string
 }
+
+type SetAuthCodeInput struct {
+	UserId         int
+	ReceiveAccount string
+	AuthType       string
+	Code           string
+	Action         string
+	ExpiredAt      time.Time
+	Status         int
+}
+
+type GetAvailableAuthCodeOutput struct {
+	UserId         int
+	ReceiveAccount string
+	Code           string
+	Action         string
+	AuthType       string
+	Status         *int
+}

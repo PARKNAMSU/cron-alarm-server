@@ -21,6 +21,10 @@ type UserRepositoryImpl interface {
 	DeleteUser(input DeleteUserInput) error
 	GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyOutput
 	GetRefreshToken(token string) *GetRefreshTokenInput
+	SetUserApiKey(userId int, key string, expiredAt time.Time) error
+	SetUserAuthCode(input SetAuthCodeInput) error
+	UserAuthorization(userId int, authType string) error
+	GetAvailableAuthCode(userId int, action string) *GetAvailableAuthCodeOutput
 }
 
 type userRepository struct {
@@ -313,4 +317,109 @@ func (r *userRepository) SetUserApiKey(userId int, key string, expiredAt time.Ti
 	_, err := r.GetMasterDB().QueryExecute(query, params...)
 
 	return err
+}
+
+func (r *userRepository) SetUserAuthCode(input SetAuthCodeInput) error {
+	var set map[string]any
+	var duplicate map[string]any
+
+	if input.Action == "auth" {
+		set = map[string]any{
+			"user_id":         input.UserId,
+			"receive_account": input.ReceiveAccount,
+			"status":          input.Status,
+		}
+		duplicate = map[string]any{
+			"status": input.Status,
+		}
+		if input.Status == 0 {
+			set["code"] = input.Code
+			set["auth_type"] = input.AuthType
+			set["action"] = input.Action
+			set["expired_at"] = input.ExpiredAt
+			duplicate["code"] = input.Code
+			duplicate["auth_type"] = input.AuthType
+			duplicate["status"] = input.Status
+			duplicate["expired_at"] = input.ExpiredAt
+		}
+	} else if input.Action == "password" {
+		set = map[string]any{
+			"user_id":         input.UserId,
+			"receive_account": input.ReceiveAccount,
+			"auth_type":       input.AuthType,
+			"code":            input.Code,
+			"action":          input.Action,
+			"expired_at":      input.ExpiredAt,
+		}
+		duplicate = map[string]any{
+			"code":       input.Code,
+			"expired_at": input.ExpiredAt,
+			"auth_type":  input.AuthType,
+		}
+	}
+
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userAuthCode"],
+		Action: query_tool.DUPLICATE,
+		Set:    map[string]any{},
+	})
+
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
+	return err
+}
+
+func (r *userRepository) UserAuthorization(userId int, authType string) error {
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userInformation"],
+		Action: query_tool.UPDATE,
+		Set: map[string]any{
+			"auth":      1,
+			"auth_type": authType,
+		},
+		Where: map[string]any{
+			"user_id": userId,
+		},
+	})
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
+	return err
+}
+
+func (r *userRepository) GetAvailableAuthCode(userId int, action string) *GetAvailableAuthCodeOutput {
+	list := []user_entity.UserAuthCodeEntity{}
+
+	where := map[string]any{
+		"user_id": userId,
+		"action":  action,
+		"expired_at": query_tool.CompareColumn{
+			CompareType: query_tool.GREATER,
+			Value:       time.Now().Format("2006-01-02 15:04:05"),
+		},
+	}
+
+	if action == "auth" {
+		where["status"] = 0
+	}
+
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userAuthCode"],
+		Action: query_tool.SELECT,
+		Where:  where,
+	})
+
+	r.GetSlaveDB().QuerySelect(&list, query, params...)
+
+	if len(list) == 0 {
+		return nil
+	}
+
+	data := list[0]
+
+	return &GetAvailableAuthCodeOutput{
+		UserId:         data.UserId,
+		ReceiveAccount: data.ReceiveAccount,
+		Action:         data.Action,
+		Status:         data.Status,
+		Code:           data.Code,
+		AuthType:       data.AuthType,
+	}
 }

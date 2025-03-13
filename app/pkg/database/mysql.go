@@ -15,13 +15,15 @@ var (
 		"userLoginData":    "user_login_data",
 		"userRefreshToken": "user_refresh_token",
 		"userApiKey":       "user_api_key",
-
-		"admin": "admin",
+		"userAuthCode":     "user_auth_code",
+		"admin":            "admin",
 
 		"alarmMethod": "alarm_method",
 		"alarmLog":    "alarm_log",
 
 		"taskLog": "task_log",
+
+		"logUserAuthCode": "log_user_auth_code",
 	}
 )
 

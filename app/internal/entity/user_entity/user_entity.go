@@ -73,10 +73,12 @@ type UserApiKeyEntity struct { // table: user_api_key
 }
 
 type UserAuthCodeEntity struct { // table: user_auth_code
-	UserId    int       `db:"user_id"`
-	Email     string    `db:"email"` // unique
-	Code      int       `db:"code"`
-	Status    int       `db:"status"` // 0: 인증 전, 1: 인증 완료
-	ExpiredAt time.Time `db:"expired_at"`
+	UserId         int       `db:"user_id"`         // pk
+	ReceiveAccount string    `db:"receive_account"` // pk
+	Action         string    `db:"action"`          // pk 인증 코드 사용 목적 auth : 계정 인증, password : 비밀번호 변경
+	AuthType       string    `db:"auth_type"`       // email, phone
+	Code           string    `db:"code"`
+	Status         *int      `db:"status"` // 0: 인증 전, 1: 인증 완료
+	ExpiredAt      time.Time `db:"expired_at"`
 	common_entity.Timestamp
 }
