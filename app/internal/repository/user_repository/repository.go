@@ -6,6 +6,7 @@ import (
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/user_entity"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/root_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
+	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/common_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/query_tool"
 )
 
@@ -19,7 +20,7 @@ type UserRepositoryImpl interface {
 	Authorization(input AuthorizationInput) error
 	SetUserRefreshToken(input SetUserRefreshTokenInput) error
 	DeleteUser(input DeleteUserInput) error
-	GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyOutput
+	GetUserPlatform(input GetUserPlatformInput) []GetUserPlatformOutput
 	GetRefreshToken(token string) *GetRefreshTokenInput
 	SetUserApiKey(userId int, key string, expiredAt time.Time) error
 	SetUserAuthCode(input SetAuthCodeInput) error
@@ -261,8 +262,8 @@ func (r *userRepository) DeleteUser(input DeleteUserInput) error {
 	return err
 }
 
-func (r *userRepository) GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyOutput {
-	var key *user_entity.UserApiKeyEntity
+func (r *userRepository) GetUserPlatform(input GetUserPlatformInput) []GetUserPlatformOutput {
+	list := make([]user_entity.UserPlatformEntity, 0)
 
 	where := map[string]any{
 		"expired_at": query_tool.CompareColumn{
@@ -285,18 +286,20 @@ func (r *userRepository) GetUserApiKey(input GetUserApiKeyInput) *GetUserApiKeyO
 		Where:  where,
 	})
 
-	r.GetSlaveDB().QuerySelect(key, query, params...)
+	r.GetSlaveDB().QuerySelect(list, query, params...)
 
-	if key == nil {
-		return nil
+	if len(list) == 0 {
+		return []GetUserPlatformOutput{}
 	}
-
-	return &GetUserApiKeyOutput{
-		UserId:   key.UserId,
-		ApiKey:   key.ApiKey,
-		Hostname: key.Hostname,
-		Status:   key.Status,
-	}
+	return common_tool.ArrayMap(list, func(data user_entity.UserPlatformEntity) GetUserPlatformOutput {
+		return GetUserPlatformOutput{
+			UserId:       data.UserId,
+			ApiKey:       data.ApiKey,
+			Hostname:     data.Hostname,
+			Status:       data.Status,
+			PlatformName: data.PlatformName,
+		}
+	})
 }
 
 func (r *userRepository) SetUserApiKey(userId int, key string, expiredAt time.Time) error {

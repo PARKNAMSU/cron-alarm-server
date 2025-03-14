@@ -57,3 +57,11 @@ func Compact[T *any](list []T) []T {
 	}
 	return returnData
 }
+
+func ArrayMap[T any, U any](list []T, f func(T) U) []U {
+	returnData := make([]U, 0, len(list))
+	for _, data := range list {
+		returnData = append(returnData, f(data))
+	}
+	return returnData
+}

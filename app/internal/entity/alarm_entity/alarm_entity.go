@@ -2,7 +2,7 @@ package alarm_entity
 
 import "nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/common_entity"
 
-type CustomerAlarmMethod struct {
+type PlatformAlarmMethod struct {
 	ApiKey   string `db:"api_key"` // pk
 	UserId   int    `db:"user_id"`
 	MethodId int    `db:"method"` // fk alarm_method.id

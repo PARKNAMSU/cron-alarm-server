@@ -141,7 +141,9 @@ func (c *CustomDB) QuerySelect(data any, query string, queryParams ...any) {
 	if reflect.TypeOf(data).Kind() != reflect.Slice {
 		var list []any
 
-		c.conn.Select(&list, query, queryParams...)
+		err := c.conn.Select(&list, query, queryParams...)
+
+		fmt.Println("[err]:[QuerySelect]:[", err.Error(), "]")
 
 		if len(list) > 0 {
 			data = &list[0]
@@ -149,7 +151,12 @@ func (c *CustomDB) QuerySelect(data any, query string, queryParams ...any) {
 		return
 	}
 
-	c.conn.Select(data, query, queryParams...)
+	err := c.conn.Select(data, query, queryParams...)
+
+	if err != nil {
+		fmt.Println("[err]:[QuerySelect]:[", err.Error(), "]")
+	}
+
 }
 
 func (c *CustomDB) NamedQueryExecute(query string, params any) (sql.Result, error) {

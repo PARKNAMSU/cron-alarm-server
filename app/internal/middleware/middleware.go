@@ -79,18 +79,23 @@ func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
 		return err
 	}
 
-	key := m.userRepository.GetUserApiKey(user_repository.GetUserApiKeyInput{
+	// todo: hostname 으로 select 후 처리하는 방식으로 변경
+	list := m.userRepository.GetUserPlatform(user_repository.GetUserPlatformInput{
 		SearchType: user_repository.GET_USER_API_KEY_API_KEY,
 		ApiKey:     &headerKey,
 	})
 
-	if key == nil {
+	if len(list) == 0 {
 		return errors.New("user api key not found")
 	}
 
-	if key.Status != 1 || key.Hostname != c.Hostname() {
+	info := list[0]
+
+	if info.Status != 1 || info.Hostname != c.Hostname() {
 		return errors.New("invalid api key")
 	}
+
+	c.Context().SetUserValue("platformInformation", info)
 
 	return c.Next()
 }

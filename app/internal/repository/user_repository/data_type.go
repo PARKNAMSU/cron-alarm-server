@@ -80,17 +80,18 @@ type DeleteUserInput struct {
 	UserId int
 }
 
-type GetUserApiKeyInput struct {
+type GetUserPlatformInput struct {
 	UserId     *int
 	ApiKey     *string
 	SearchType SelectKeyType
 }
 
-type GetUserApiKeyOutput struct {
-	UserId   int
-	ApiKey   string
-	Status   int
-	Hostname string
+type GetUserPlatformOutput struct {
+	UserId       int
+	ApiKey       string
+	Status       int
+	Hostname     string
+	PlatformName string
 }
 
 type SetAuthCodeInput struct {
