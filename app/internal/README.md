@@ -24,15 +24,11 @@
 
 ## repository
 
-<details>
-
-<summary>
-
 ### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go) 
 
-</summary>
+<details>
 
-유저 DB데이터를 처리(데이터 추가, 업데이트, 삭제, 조회)
+<summary>유저 DB데이터를 처리(데이터 추가, 업데이트, 삭제, 조회)</summary>
 
 * GetUser
     * 유저 전체 정보 가져오기 (select)
