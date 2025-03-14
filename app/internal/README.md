@@ -24,7 +24,11 @@
 
 ## repository
 
-### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go)
+<details>
+
+<summary>
+### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go) 
+</summary>
 
 유저 DB데이터를 처리(데이터 추가, 업데이트, 삭제, 조회)
 
@@ -50,6 +54,8 @@
     * 유저 갱신 토큰 가져오기 (select)
 * SetUserApiKey
     * 유저 api key 생성 및 업데이트 (duplicate)
+
+</details>
 
 </br>
 
