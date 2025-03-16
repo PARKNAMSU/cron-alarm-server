@@ -276,6 +276,8 @@ func (r *userRepository) GetUserPlatform(input GetUserPlatformInput) []GetUserPl
 		where["user_id"] = *input.UserId
 	} else if input.SearchType == GET_USER_API_KEY_API_KEY {
 		where["api_key"] = *input.ApiKey
+	} else if input.SearchType == GET_USER_API_KEY_HOST {
+		where["hostname"] = *input.Hostname
 	} else {
 		return nil
 	}

@@ -72,17 +72,11 @@ func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
 		return errors.New("api key not exist")
 	}
 
-	decryptKey, err := encrypt_tool.Decrypt(headerKey, config.USER_API_ENCRYPT_KEY)
-	headerKey = string(decryptKey)
+	hostname := c.Hostname()
 
-	if err != nil {
-		return err
-	}
-
-	// todo: hostname 으로 select 후 처리하는 방식으로 변경
 	list := m.userRepository.GetUserPlatform(user_repository.GetUserPlatformInput{
-		SearchType: user_repository.GET_USER_API_KEY_API_KEY,
-		ApiKey:     &headerKey,
+		SearchType: user_repository.GET_USER_API_KEY_HOST,
+		ApiKey:     &hostname,
 	})
 
 	if len(list) == 0 {
@@ -91,7 +85,23 @@ func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
 
 	info := list[0]
 
-	if info.Status != 1 || info.Hostname != c.Hostname() {
+	decryptKey, err := encrypt_tool.Decrypt(headerKey, config.USER_API_ENCRYPT_KEY)
+
+	if err != nil {
+		return err
+	}
+
+	headerKey = string(decryptKey)
+
+	decryptKey, err = encrypt_tool.Decrypt(info.ApiKey, config.USER_API_ENCRYPT_KEY)
+
+	if err != nil {
+		return err
+	}
+
+	apiKey := string(decryptKey)
+
+	if info.Status != 1 || headerKey != apiKey {
 		return errors.New("invalid api key")
 	}
 

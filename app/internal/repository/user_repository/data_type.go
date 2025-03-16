@@ -10,6 +10,7 @@ var (
 
 	GET_USER_API_KEY_USER_ID SelectKeyType = 0
 	GET_USER_API_KEY_API_KEY SelectKeyType = 1
+	GET_USER_API_KEY_HOST    SelectKeyType = 2
 )
 
 type CreateUserInput struct {
@@ -83,6 +84,7 @@ type DeleteUserInput struct {
 type GetUserPlatformInput struct {
 	UserId     *int
 	ApiKey     *string
+	Hostname   *string
 	SearchType SelectKeyType
 }
 
