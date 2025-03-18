@@ -1,6 +1,7 @@
 package user_repository
 
 import (
+	"errors"
 	"time"
 
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/user_entity"
@@ -22,7 +23,8 @@ type UserRepositoryImpl interface {
 	DeleteUser(input DeleteUserInput) error
 	GetUserPlatform(input GetUserPlatformInput) []GetUserPlatformOutput
 	GetRefreshToken(token string) *GetRefreshTokenInput
-	SetUserApiKey(userId int, key string, expiredAt time.Time) error
+	InsertUserPlatform(input InsertUserPlatformInput) error
+	UpdateUserPlatform(input UpdateUserPlatformInput) error
 	SetUserAuthCode(input SetAuthCodeInput) error
 	UserAuthorization(userId int, authType string) error
 	GetAvailableAuthCode(userId int, action string) *GetAvailableAuthCodeOutput
@@ -294,13 +296,15 @@ func (r *userRepository) DeleteUser(input DeleteUserInput) error {
 func (r *userRepository) GetUserPlatform(input GetUserPlatformInput) []GetUserPlatformOutput {
 	list := make([]user_entity.UserPlatformEntity, 0)
 
-	where := map[string]any{
-		"expired_at": query_tool.CompareColumn{
+	where := map[string]any{}
+
+	if input.IsGetUsable {
+		where["expired_at"] = query_tool.CompareColumn{
 			CompareType: query_tool.GREATER,
 			Value:       time.Now().Format("2006-01-02 15:04:05"),
-		},
+		}
+		where["status"] = 1
 	}
-
 	if input.SearchType == GET_USER_API_KEY_USER_ID {
 		where["user_id"] = *input.UserId
 	} else if input.SearchType == GET_USER_API_KEY_API_KEY {
@@ -308,7 +312,7 @@ func (r *userRepository) GetUserPlatform(input GetUserPlatformInput) []GetUserPl
 	} else if input.SearchType == GET_USER_API_KEY_HOST {
 		where["hostname"] = *input.Hostname
 	} else {
-		return nil
+		return []GetUserPlatformOutput{}
 	}
 
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
@@ -333,18 +337,45 @@ func (r *userRepository) GetUserPlatform(input GetUserPlatformInput) []GetUserPl
 	})
 }
 
-func (r *userRepository) SetUserApiKey(userId int, key string, expiredAt time.Time) error {
+func (r *userRepository) InsertUserPlatform(input InsertUserPlatformInput) error {
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
-		Table:  database.MYSQL_TABLE["userApiKey"],
-		Action: query_tool.DUPLICATE,
+		Table:  database.MYSQL_TABLE["userPlatform"],
+		Action: query_tool.INSERT,
 		Set: map[string]any{
-			"user_id":    userId,
-			"api_key":    key,
-			"expired_at": expiredAt,
+			"user_id":    input.UserId,
+			"api_key":    input.ApiKey,
+			"expired_at": input.ExpiredAt,
+			"status":     1,
+			"hostname":   input.Hostname,
 		},
-		Duplicate: map[string]any{
-			"api_key":    key,
-			"expired_at": expiredAt,
+	})
+
+	_, err := r.GetMasterDB().QueryExecute(query, params...)
+
+	return err
+}
+
+func (r *userRepository) UpdateUserPlatform(input UpdateUserPlatformInput) error {
+	set := map[string]any{}
+
+	if input.PlatformName != nil {
+		set["platform_name"] = *input.PlatformName
+	}
+	if input.ExpiredAt != nil {
+		set["expired_at"] = *input.ExpiredAt
+	}
+
+	if len(set) == 0 {
+		return errors.New("no update data")
+	}
+
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["userPlatform"],
+		Action: query_tool.INSERT,
+		Set:    set,
+		Where: map[string]any{
+			"hostname": input.Hostname,
+			"user_id":  input.UserId,
 		},
 	})
 

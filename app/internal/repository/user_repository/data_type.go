@@ -84,10 +84,11 @@ type DeleteUserInput struct {
 }
 
 type GetUserPlatformInput struct {
-	UserId     *int
-	ApiKey     *string
-	Hostname   *string
-	SearchType SelectKeyType
+	UserId      *int
+	ApiKey      *string
+	Hostname    *string
+	SearchType  SelectKeyType
+	IsGetUsable bool
 }
 
 type GetUserPlatformOutput struct {
@@ -115,4 +116,18 @@ type GetAvailableAuthCodeOutput struct {
 	Action         string
 	AuthType       string
 	Status         *int
+}
+
+type InsertUserPlatformInput struct {
+	Hostname  string
+	ApiKey    string
+	ExpiredAt time.Time
+	UserId    int
+}
+
+type UpdateUserPlatformInput struct {
+	PlatformName *string
+	ExpiredAt    *time.Time
+	Hostname     string
+	UserId       int
 }

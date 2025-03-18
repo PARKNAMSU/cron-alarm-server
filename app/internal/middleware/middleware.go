@@ -75,8 +75,9 @@ func (m *Middleware) APIKeyValidation(c *fiber.Ctx) error {
 	hostname := c.Hostname()
 
 	list := m.userRepository.GetUserPlatform(user_repository.GetUserPlatformInput{
-		SearchType: user_repository.GET_USER_API_KEY_HOST,
-		ApiKey:     &hostname,
+		SearchType:  user_repository.GET_USER_API_KEY_HOST,
+		ApiKey:      &hostname,
+		IsGetUsable: true,
 	})
 
 	if len(list) == 0 {
