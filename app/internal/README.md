@@ -24,7 +24,7 @@
 
 <summary>유저관련 비즈니스 로직을 처리</summary>
 
-* SignUp
+* __SignUp__
     1. 회원가입 이메일과 동일한 이메일이 있는지 확인 후 없는경우 종료
     2. 유저 index 데이터 생성 후 키로 사용할 `userId` ai key 리턴
     3. 패스워드 암호화 처리
@@ -34,13 +34,13 @@
     5. 토큰 데이터 생성 후 유저에게 전달할 `accessToken`, `refreshToken` 생성
     6. `refreshToken` 테이블에 `userId` 와 함께 토큰 저장 (탈취당할 경우 해당 토큰 무효화 처리 위함)
     7. 유저데이터와 함께 토큰 리턴
-* SignIn
+* __SignIn__
     1. `email` 통해 유저정보 가져오기. 없는경우 종료
     2. db 에 저장된 암호화된 비밀번호를 복호화하여 전달받은 비밀번호와 비교. 틀릴경우 종료
     3. 토큰 데이터 생성 후 유저에게 전달할 `accessToken`, `refreshToken` 생성
     4. `refreshToken` 테이블에 `userId` 와 함께 토큰 저장 (탈취당할 경우 해당 토큰 무효화 처리 위함)
     5. 유저데이터와 함께 토큰 리턴
-* Authorization
+* __Authorization__
     1. 유저가 입력한 인증코드 통해 유효한 코드를 가져옴. 없거나 저장된 코드와 유저가 입력한 코드가 다른경우 종료
     2. 유저 인증관련 정보를 업데이트 및 추가
         * 유저 인증상태를 인증 완료 상태로 변경
@@ -48,13 +48,13 @@
         * 유저 인증코드 로그에 데이터 저장(인증완료 상태로 저장)
     3. 유저 토큰데이터 정보를 업데이트하여 `accessToken`, `refreshToken` 생성
     4. 유저정보와 토큰정보를 리턴
-* AuthCodeSend
+* __AuthCodeSend__
     1. 인증코드값과 인증 만료시간을 생성
     2. `AuthType`(인증 방법) 에 따라 분기하여 인증 코드 발송(현재는 email 발송만 존재)
     3. 유저 인증코드 관련 정보를 업데이트
         * 인증 코드 테이블에 코드 저장
         * 유저 인증코드 로그에 데이터 저장(미인증 상태로 저장)
-* ApiKeyIssue
+* __ApiKeyIssue__
 
 </details>
 
@@ -70,33 +70,33 @@
 
 <summary>유저 DB데이터를 처리(데이터 추가, 업데이트, 삭제, 조회)</summary>
 
-* GetUser
+* __GetUser__
     * 유저 전체 정보 가져오기 (select)
-* CreateUser
+* __CreateUser__
     * 유저 index 테이블 유저 생성 (insert)
-* SetUserLoginData
+* __SetUserLoginData__
     * 유저 로그인 정보 생성 및 업데이트 (duplicate)
-* SetUserOauth
+* __SetUserOauth__
     * 유저 oauth 정보 생성 및 업데이트 (duplicate)
-* SetUserInformation
+* __SetUserInformation__
     * 유저 상세정보 생성 및 업데이트 (duplicate)
-* Authorization
+* __Authorization__
     * 유저 인증 (update)
-* SetUserRefreshToken
+* __SetUserRefreshToken__
     * 유저 갱신 토큰 생성 및 업데이트 (duplicate)
-* DeleteUser
+* __DeleteUser__
     * 유저 삭제상태로 업데이트 (update)
-* GetUserApiKey
+* __GetUserApiKey__
     * 유저 api key 가져오기 (select)
-* GetRefreshToken
+* __GetRefreshToken__
     * 유저 갱신 토큰 가져오기 (select)
-* SetUserApiKey
+* __SetUserApiKey__
     * 유저 api key 생성 및 업데이트 (duplicate)
-* SetUserAuthCode
+* __SetUserAuthCode__
     * 유저 인증 코드 발급 (insert)
-* UserAuthorization
+* __UserAuthorization__
     * 유저 인증 처리 (update)
-* GetAvailableAuthCode
+* __GetAvailableAuthCode__
     * 유효한 인증 코드 가져오기 (select)
 
 </details>
