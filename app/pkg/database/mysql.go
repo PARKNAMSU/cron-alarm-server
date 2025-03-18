@@ -17,6 +17,7 @@ var (
 		"userApiKey":       "user_api_key",
 		"userAuthCode":     "user_auth_code",
 		"admin":            "admin",
+		"userPermission":   "user_permission",
 
 		"alarmMethod": "alarm_method",
 		"alarmLog":    "alarm_log",

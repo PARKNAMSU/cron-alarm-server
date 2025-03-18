@@ -69,17 +69,17 @@ func (c *UserController) Authorization(ctx *fiber.Ctx) error {
 		})
 	}
 
-	_, err := c.usecase.Authorization(user_usecase.AuthorizationInput{
-		UserId: userData.UserId,
-		Code:   code,
-		IpAddr: ctx.IP(),
+	output, err := c.usecase.Authorization(user_usecase.AuthorizationInput{
+		UserData: userData,
+		Code:     code,
+		IpAddr:   ctx.IP(),
 	})
 
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(fiber.Map{"data": "success"})
+	return ctx.JSON(fiber.Map{"data": output})
 }
 
 func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {

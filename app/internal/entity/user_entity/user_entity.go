@@ -1,7 +1,6 @@
 package user_entity
 
 import (
-	"database/sql"
 	"time"
 
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/common_entity"
@@ -30,26 +29,29 @@ type UserOauthEntity struct { // table: user_oauth (유저 소셜 로그인 정�
 }
 
 type UserInformationEntity struct { // table: user_information (유저 데이터 전달용 정보)
-	UserId   int            `db:"user_id"`
-	Email    sql.NullString `db:"email"`
-	Name     sql.NullString `db:"name"`
-	Auth     int            `db:"auth"`
-	AuthType sql.NullString `db:"auth_type"`
+	UserId       int     `db:"user_id"`
+	Email        *string `db:"email"`
+	Name         *string `db:"name"`
+	Auth         int     `db:"auth"`
+	AuthType     *int    `db:"auth_type"`
+	PermissionId *int    `db:"permission_id"`
 	common_entity.Timestamp
 }
 
 type UserDataEntity struct {
-	UserId    int     `db:"user_id"`
-	Email     *string `db:"email"`
-	Password  *string `db:"password"`
-	Method    string  `db:"method"` // normal: 일반 유저, oauth: 소셜 로그인 유저
-	Status    int     `db:"status"`
-	IpAddr    string  `db:"ip_addr"`
-	Name      *string `db:"name"`
-	Auth      int     `db:"auth"`
-	AuthType  *string `db:"auth_type"`
-	OauthId   *string `db:"oauth_id"`
-	OauthHost *string `db:"oauth_host"`
+	UserId         int     `db:"user_id"`
+	Email          *string `db:"email"`
+	Password       *string `db:"password"`
+	Method         string  `db:"method"` // normal: 일반 유저, oauth: 소셜 로그인 유저
+	Status         int     `db:"status"`
+	IpAddr         string  `db:"ip_addr"`
+	Name           *string `db:"name"`
+	Auth           int     `db:"auth"`
+	AuthType       *string `db:"auth_type"`
+	OauthId        *string `db:"oauth_id"`
+	OauthHost      *string `db:"oauth_host"`
+	Grade          *string `db:"grade"`
+	MaxPlatformCnt *int    `db:"max_platform_cnt"`
 	common_entity.Timestamp
 }
 
@@ -64,9 +66,9 @@ type UserRefreshTokenEntity struct { // table: user_refresh_token
 }
 
 type UserPlatformEntity struct { // table: user_api_key
+	Hostname     string    `db:"hostname"`      // 해당 키를 사용하는 호스트 이름
 	ApiKey       string    `db:"api_key"`       // 플랫폼 인증 api key
 	Status       int       `db:"status"`        // 1: 사용 가능, 0: 사용 중지
-	Hostname     string    `db:"hostname"`      // 해당 키를 사용하는 호스트 이름
 	PlatformName string    `db:"platform_name"` // 플랫폼 이름
 	UserId       int       `db:"user_id"`
 	ExpiredAt    time.Time `db:"expired_at"`

@@ -62,19 +62,21 @@ type GetUserInput struct {
 }
 
 type GetUserOutput struct {
-	UserId    int
-	Method    string
-	Status    int
-	IpAddr    string
-	Email     *string
-	Password  *string
-	Name      *string
-	OauthId   *string
-	OauthHost *string
-	Auth      int
-	AuthType  *string
-	CreatedAt time.Time
-	UpdatedAt *time.Time
+	UserId         int
+	Method         string
+	Status         int
+	IpAddr         string
+	Email          *string
+	Password       *string
+	Name           *string
+	OauthId        *string
+	OauthHost      *string
+	Auth           int
+	AuthType       *string
+	Grade          *string
+	MaxPlatformCnt int
+	CreatedAt      time.Time
+	UpdatedAt      *time.Time
 }
 
 type DeleteUserInput struct {

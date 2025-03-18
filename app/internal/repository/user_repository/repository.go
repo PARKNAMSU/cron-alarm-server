@@ -61,23 +61,45 @@ func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
 		Table:  database.MYSQL_TABLE["user"],
 		Action: query_tool.SELECT,
-		Select: []string{"ui.user_id"},
-		As:     "u",
+		Select: []string{
+			"ui.user_id",
+			"ui.email",
+			"ul.password",
+			"u.method",
+			"u.status",
+			"u.ip_addr",
+			"ui.name",
+			"uo.oauth_id",
+			"uo.oauth_host",
+			"ui.auth",
+			"ui.auth_type",
+			"u.created_at",
+			"u.updated_at",
+			"up.grade",
+			"up.max_platform_cnt",
+		},
+		As: "u",
 		Join: []query_tool.JoinParams{
 			{
-				Table: database.MYSQL_TABLE["user_information"],
+				Table: database.MYSQL_TABLE["userInformation"],
 				As:    "ui",
 				On:    "u.id = ui.user_id",
 				Type:  "INNER",
 			},
 			{
-				Table: database.MYSQL_TABLE["user_oauth"],
+				Table: database.MYSQL_TABLE["userPermission"],
+				As:    "up",
+				On:    "ui.permission_id = up.id",
+				Type:  "LEFT",
+			},
+			{
+				Table: database.MYSQL_TABLE["userOauth"],
 				As:    "uo",
 				On:    "u.id = ui.user_id",
 				Type:  "LEFT",
 			},
 			{
-				Table: database.MYSQL_TABLE["user_login_data"],
+				Table: database.MYSQL_TABLE["userLoginData"],
 				As:    "ul",
 				On:    "u.id = ui.user_id",
 				Type:  "LEFT",
@@ -98,7 +120,7 @@ func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 
 	user := data[0]
 
-	return &GetUserOutput{
+	output := &GetUserOutput{
 		UserId:    user.UserId,
 		Method:    user.Method,
 		Status:    user.Status,
@@ -113,6 +135,13 @@ func (r *userRepository) GetUser(input GetUserInput) *GetUserOutput {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
+
+	if user.Grade != nil {
+		output.Grade = user.Grade
+		output.MaxPlatformCnt = *user.MaxPlatformCnt
+	}
+
+	return output
 }
 
 func (r *userRepository) CreateUser(input CreateUserInput) (int, error) {

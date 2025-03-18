@@ -27,12 +27,16 @@ type SignInOutput struct {
 }
 
 type AuthorizationInput struct {
-	UserId int
-	Code   string
-	IpAddr string
+	UserData global_type.UserTokenData
+	Code     string
+	IpAddr   string
 }
 
-type AuthorizationOutput struct{}
+type AuthorizationOutput struct {
+	global_type.UserTokenData
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
 
 type AuthCodeSendInput struct {
 	UserId         int

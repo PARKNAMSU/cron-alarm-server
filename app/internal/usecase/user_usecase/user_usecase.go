@@ -1,6 +1,7 @@
 package user_usecase
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -191,7 +192,8 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 }
 
 func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutput, error) {
-	authCode := u.userRepository.GetAvailableAuthCode(input.UserId, "auth")
+	userData := input.UserData
+	authCode := u.userRepository.GetAvailableAuthCode(userData.UserId, "auth")
 
 	if authCode == nil {
 		return AuthorizationOutput{}, errors.New("INVALID-CODE")
@@ -200,13 +202,13 @@ func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutp
 	errors := common_tool.ParallelExec(
 		func() error {
 			return u.userRepository.Authorization(user_repository.AuthorizationInput{
-				UserId:   input.UserId,
+				UserId:   userData.UserId,
 				AuthType: authCode.AuthType,
 			})
 		},
 		func() error {
 			return u.userRepository.SetUserAuthCode(user_repository.SetAuthCodeInput{
-				UserId:         input.UserId,
+				UserId:         userData.UserId,
 				ReceiveAccount: authCode.ReceiveAccount,
 				Action:         authCode.Action,
 				Status:         1,
@@ -214,7 +216,7 @@ func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutp
 		},
 		func() error {
 			return u.logRepository.InsertLogUserAuthCode(log_repository.InsertLogUserAuthCodeInput{
-				UserId:         input.UserId,
+				UserId:         userData.UserId,
 				ReceiveAccount: authCode.ReceiveAccount,
 				Action:         "auth",
 				AuthType:       authCode.AuthType,
@@ -225,6 +227,12 @@ func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutp
 		},
 	)
 
+	userData.Auth = 1
+	userData.AuthType = &authCode.AuthType
+
+	accessToken := jwt_tool.GenerateToken(userData, config.JWT_ACCESS_TOKEN_KEY, config.JWT_ACCESS_TOKEN_PERIOD)
+	refreshToken := jwt_tool.GenerateToken(userData, config.JWT_REFRESH_TOKEN_KEY, config.JWT_REFRESH_TOKEN_PERIOD)
+
 	if len(errors) > 0 {
 		u.userRepository.Rollback()
 		u.logRepository.Rollback()
@@ -234,7 +242,16 @@ func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutp
 	u.userRepository.Commit()
 	u.logRepository.Commit()
 
-	return AuthorizationOutput{}, nil
+	output := AuthorizationOutput{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	userBytes, _ := json.Marshal(userData)
+
+	json.Unmarshal(userBytes, &output)
+
+	return output, nil
 }
 
 func (u *userUsecase) AuthCodeSend(input AuthCodeSendInput) (AuthCodeSendOutput, error) {

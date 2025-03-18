@@ -5,7 +5,6 @@ import "nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/common_entit
 type UserPermissionEntity struct {
 	Id             int    `db:"id"`
 	MaxPlatformCnt int    `db:"max_platform_cnt"` // 최대 플랫폼 개수
-	MaxAlarmCnt    int    `db:"max_alarm_cnt"`    // 최대 알람 개수
 	Grade          string `db:"grade"`            // 권한 이름
 	common_entity.Timestamp
 }
