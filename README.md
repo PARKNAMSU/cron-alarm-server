@@ -9,7 +9,12 @@
 
 ## 프로젝트 구성
 
-* [cmd](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/cmd)
-* [config](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/config)
-* [internal](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/internal)
-* [pkg](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/pkg)
+### [cmd](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/cmd)
+  main.go 실행파일이 위치하는 곳으로 애플리케이션의 시작 패키지.
+### [config](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/config)
+  환경변수 및 설정값을 정의해놓은 패키지.
+### [internal](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/internal)
+  프로젝트 내부에서 사용되는 핵심 애플리케이션 로직이 포함되어 있는 패키지. router, controller, usecase, repository 등 프로젝트의 핵심 패키지가 포함되어 있음.
+### [pkg](https://github.com/PARKNAMSU/cron-alarm-server/tree/main/app/pkg)
+  프로젝트에서 공통적으로 사용될 유틸리티 패키지. database툴 및 기타 툴 등이 포함되어 있음.
+  
