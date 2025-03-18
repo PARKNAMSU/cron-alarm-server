@@ -20,7 +20,7 @@
 
 ### [user usecase](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/usecase/user_usecase/user_usecase.go)
 
-<detail>
+<details>
 
 <summary>유저관련 비즈니스 로직을 처리</summary>
 
@@ -56,7 +56,7 @@
         * 유저 인증코드 로그에 데이터 저장(미인증 상태로 저장)
 * ApiKeyIssue
 
-</detail>
+</details>
 
 </br>
 
