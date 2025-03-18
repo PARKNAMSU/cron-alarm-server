@@ -16,13 +16,53 @@
 
 ## usecase
 
+비즈니스 로직을 처리
+
 ### [user usecase](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/usecase/user_usecase/user_usecase.go)
 
-유저관련 비즈니스 로적을 처리
+<detail>
+
+<summary>유저관련 비즈니스 로직을 처리</summary>
+
+* SignUp
+    1. 회원가입 이메일과 동일한 이메일이 있는지 확인 후 없는경우 종료
+    2. 유저 index 데이터 생성 후 키로 사용할 `userId` ai key 리턴
+    3. 패스워드 암호화 처리
+    4. 유저관련 데이터 처리
+        * 유저 정보 테이블에 `userId`, `email` 저장
+        * 유저 로그인시 사용할 로그인 데이터에 `userId` , `email` , `password` 저장
+    5. 토큰 데이터 생성 후 유저에게 전달할 `accessToken`, `refreshToken` 생성
+    6. `refreshToken` 테이블에 `userId` 와 함께 토큰 저장 (탈취당할 경우 해당 토큰 무효화 처리 위함)
+    7. 유저데이터와 함께 토큰 리턴
+* SignIn
+    1. `email` 통해 유저정보 가져오기. 없는경우 종료
+    2. db 에 저장된 암호화된 비밀번호를 복호화하여 전달받은 비밀번호와 비교. 틀릴경우 종료
+    3. 토큰 데이터 생성 후 유저에게 전달할 `accessToken`, `refreshToken` 생성
+    4. `refreshToken` 테이블에 `userId` 와 함께 토큰 저장 (탈취당할 경우 해당 토큰 무효화 처리 위함)
+    5. 유저데이터와 함께 토큰 리턴
+* Authorization
+    1. 유저가 입력한 인증코드 통해 유효한 코드를 가져옴. 없거나 저장된 코드와 유저가 입력한 코드가 다른경우 종료
+    2. 유저 인증관련 정보를 업데이트 및 추가
+        * 유저 인증상태를 인증 완료 상태로 변경
+        * 유저 인증코드 테이블의 유저 인증코드의 상태를 인증 완료 상태로 변경
+        * 유저 인증코드 로그에 데이터 저장(인증완료 상태로 저장)
+    3. 유저 토큰데이터 정보를 업데이트하여 `accessToken`, `refreshToken` 생성
+    4. 유저정보와 토큰정보를 리턴
+* AuthCodeSend
+    1. 인증코드값과 인증 만료시간을 생성
+    2. `AuthType`(인증 방법) 에 따라 분기하여 인증 코드 발송(현재는 email 발송만 존재)
+    3. 유저 인증코드 관련 정보를 업데이트
+        * 인증 코드 테이블에 코드 저장
+        * 유저 인증코드 로그에 데이터 저장(미인증 상태로 저장)
+* ApiKeyIssue
+
+</detail>
 
 </br>
 
 ## repository
+
+데이터 삽입 및 조회
 
 ### [user repository](https://github.com/PARKNAMSU/cron-alarm-server/blob/main/app/internal/repository/user_repository/repository.go) 
 
@@ -52,6 +92,12 @@
     * 유저 갱신 토큰 가져오기 (select)
 * SetUserApiKey
     * 유저 api key 생성 및 업데이트 (duplicate)
+* SetUserAuthCode
+    * 유저 인증 코드 발급 (insert)
+* UserAuthorization
+    * 유저 인증 처리 (update)
+* GetAvailableAuthCode
+    * 유효한 인증 코드 가져오기 (select)
 
 </details>
 

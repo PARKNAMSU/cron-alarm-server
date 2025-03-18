@@ -195,7 +195,7 @@ func (u *userUsecase) Authorization(input AuthorizationInput) (AuthorizationOutp
 	userData := input.UserData
 	authCode := u.userRepository.GetAvailableAuthCode(userData.UserId, "auth")
 
-	if authCode == nil {
+	if authCode == nil || authCode.Code != input.Code {
 		return AuthorizationOutput{}, errors.New("INVALID-CODE")
 	}
 
