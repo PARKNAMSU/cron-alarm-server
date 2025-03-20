@@ -1,6 +1,10 @@
 package user_usecase
 
-import "nspark-cron-alarm.com/cron-alarm-server/app/internal/global_type"
+import (
+	"time"
+
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/global_type"
+)
 
 type SignUpInput struct {
 	Email    string
@@ -55,4 +59,8 @@ type ApiKeyIssueInput struct {
 	IpAddr   string
 }
 
-type ApiKeyIssueOutput struct{}
+type ApiKeyIssueOutput struct {
+	ApiKey    string    `json:"apiKey"`
+	ExpiredAt time.Time `json:"expiredAt"`
+	Hostname  string    `json:"hostname"`
+}

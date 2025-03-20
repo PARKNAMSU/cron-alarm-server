@@ -34,7 +34,7 @@ func SendDiscordMessage(input DiscordInput) error {
 	case MESSAGE_LOGGING:
 		{
 			content = strings.Join([]string{
-				"*" + input.Title + "*\n",
+				"**" + input.Title + "**\n",
 				"```" + input.Message + "```",
 			}, "\n")
 		}

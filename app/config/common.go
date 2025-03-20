@@ -14,6 +14,7 @@ var (
 var (
 	JWT_ACCESS_TOKEN_PERIOD  = time.Minute * 30
 	JWT_REFRESH_TOKEN_PERIOD = time.Hour * 24 * 30
+	API_KEY_AVAILABLE_PERIOD = time.Hour * 24 * 30
 )
 
 var (

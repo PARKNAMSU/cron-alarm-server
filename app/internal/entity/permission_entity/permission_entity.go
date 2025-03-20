@@ -10,7 +10,8 @@ type UserPermissionEntity struct {
 }
 
 type PlatformPermissionEntity struct {
-	Id          int `db:"id"`
-	MaxAlarmCnt int `db:"max_alarm_cnt"` // 플랫폼 별 최대 알람 개수
+	Id           int `db:"id"`
+	MaxAlertCnt  int `db:"max_alert_cnt"`  // 플랫폼 별 최대 알람 개수
+	MaxMethodCnt int `db:"max_method_cnt"` // 플랫폼 별 최대 알람 전송 방법 개수
 	common_entity.Timestamp
 }

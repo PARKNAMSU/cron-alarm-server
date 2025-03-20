@@ -19,3 +19,9 @@ type UserTokenData struct {
 	CreatedAt      time.Time  `json:"createdAt"`
 	UpdatedAt      *time.Time `json:"updatedAt"`
 }
+
+type CustomError struct {
+	Code   string `json:"code"`
+	Msg    string `json:"msg"`
+	Status int    `json:"status"`
+}
