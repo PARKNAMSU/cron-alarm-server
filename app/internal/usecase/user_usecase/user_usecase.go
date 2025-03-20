@@ -309,5 +309,11 @@ func (u *userUsecase) AuthCodeSend(input AuthCodeSendInput) (AuthCodeSendOutput,
 
 func (u *userUsecase) ApiKeyIssue(input ApiKeyIssueInput) ApiKeyIssueOutput {
 	// todo : API 키 발급 로직 추가
+	// 1. 사용자의 플랫폼 목록을 조회한다.
+	// 2. 사용자의 최대 플랫폼 생성 개수가 넘었는지 확인한다.
+	// 3. 넘지 않았을 경우 api key를 생성한다.
+	// 4. 생성한 apk key를 플랫폼 테이블에 저장한다.
+	// 5. 생성 로그를 기록한다.
+	// 6. 생성한 api key를 반환한다.
 	return ApiKeyIssueOutput{}
 }

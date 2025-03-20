@@ -49,6 +49,10 @@ type AuthCodeSendOutput struct {
 	Message string `json:"message"`
 }
 
-type ApiKeyIssueInput struct{}
+type ApiKeyIssueInput struct {
+	UserData global_type.UserTokenData
+	Hostname string
+	IpAddr   string
+}
 
 type ApiKeyIssueOutput struct{}

@@ -25,6 +25,7 @@ var (
 		"taskLog": "task_log",
 
 		"logUserAuthCode": "log_user_auth_code",
+		"logUserApiKey":   "log_user_api_key",
 
 		"statPlatformAlarm": "stat_platform_alarm",
 	}

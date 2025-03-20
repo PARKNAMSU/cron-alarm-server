@@ -9,6 +9,7 @@ import (
 type LogRepositoryImpl interface {
 	root_repository.RootRepositoryImpl
 	InsertLogUserAuthCode(input InsertLogUserAuthCodeInput) error
+	InsertLogUserApiKey(input InsertLogUserApiKeyInput) error
 }
 
 type logRepository struct {
@@ -40,6 +41,22 @@ func (r *logRepository) InsertLogUserAuthCode(input InsertLogUserAuthCodeInput) 
 			"action":          input.Action,
 			"status":          input.Status,
 			"ip_addr":         input.IpAddr,
+		},
+	})
+	_, err := r.GetMasterDB().QueryExecute(query, params)
+	return err
+}
+
+func (r *logRepository) InsertLogUserApiKey(input InsertLogUserApiKeyInput) error {
+	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
+		Table:  database.MYSQL_TABLE["logUserApiKey"],
+		Action: query_tool.INSERT,
+		Set: map[string]any{
+			"user_id":  input.UserId,
+			"hostname": input.Hostname,
+			"api_key":  input.ApiKey,
+			"ip_addr":  input.IpAddr,
+			"action":   input.Action,
 		},
 	})
 	_, err := r.GetMasterDB().QueryExecute(query, params)

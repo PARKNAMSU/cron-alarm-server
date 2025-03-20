@@ -9,3 +9,11 @@ type InsertLogUserAuthCodeInput struct {
 	Status         int
 	IpAddr         string
 }
+
+type InsertLogUserApiKeyInput struct {
+	UserId   int
+	IpAddr   string
+	Hostname string
+	ApiKey   string
+	Action   string // issue, delete, periodExtend
+}
