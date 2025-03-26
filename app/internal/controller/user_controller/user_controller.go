@@ -2,7 +2,7 @@ package user_controller
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/global_type"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/usecase/user_usecase"
 )
 
@@ -57,7 +57,7 @@ func (c *UserController) SignIn(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) Authorization(ctx *fiber.Ctx) error {
-	userData, isExist := ctx.Context().Value("userData").(global_type.UserTokenData)
+	userData, isExist := ctx.Context().Value("userData").(types.UserTokenData)
 	body := ctx.Context().Value("body").(map[string]any)
 
 	code := body["code"].(string)
@@ -83,7 +83,7 @@ func (c *UserController) Authorization(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {
-	userData, isOk := ctx.Context().Value("userData").(global_type.UserTokenData)
+	userData, isOk := ctx.Context().Value("userData").(types.UserTokenData)
 	body := ctx.Context().Value("body").(map[string]any)
 
 	account := body["receiveAccount"].(string)

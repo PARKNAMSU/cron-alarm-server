@@ -21,5 +21,12 @@ func UserRouter() func(router fiber.Router) {
 			userController.SignIn,
 		)
 
+		router.Post(
+			"/auth/code",
+			middleware.BodyValidator("receiveAccount", config.REQUEST_DATA_TYPE_STRING),
+			middleware.BodyValidator("authType", config.REQUEST_DATA_TYPE_STRING),
+			userController.AuthCodeSend,
+		)
+
 	}
 }

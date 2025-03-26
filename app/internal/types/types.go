@@ -1,4 +1,4 @@
-package global_type
+package types
 
 import "time"
 

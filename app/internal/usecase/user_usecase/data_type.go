@@ -3,7 +3,7 @@ package user_usecase
 import (
 	"time"
 
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/global_type"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
 )
 
 type SignUpInput struct {
@@ -13,7 +13,7 @@ type SignUpInput struct {
 }
 
 type SignUpOutput struct {
-	global_type.UserTokenData
+	types.UserTokenData
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
@@ -25,19 +25,19 @@ type SignInInput struct {
 }
 
 type SignInOutput struct {
-	global_type.UserTokenData
+	types.UserTokenData
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
 
 type AuthorizationInput struct {
-	UserData global_type.UserTokenData
+	UserData types.UserTokenData
 	Code     string
 	IpAddr   string
 }
 
 type AuthorizationOutput struct {
-	global_type.UserTokenData
+	types.UserTokenData
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
@@ -54,7 +54,7 @@ type AuthCodeSendOutput struct {
 }
 
 type ApiKeyIssueInput struct {
-	UserData global_type.UserTokenData
+	UserData types.UserTokenData
 	Hostname string
 	IpAddr   string
 }
