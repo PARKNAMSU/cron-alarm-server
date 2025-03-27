@@ -24,10 +24,10 @@ func NewController(usecase user_usecase.UserUsecaseImpl) *UserController {
 }
 
 func (c *UserController) SignUp(ctx *fiber.Ctx) error {
-	body := ctx.Context().Value("body").(map[string]any)
+	body := ctx.Context().Value("body").(types.SignUpRequest)
 	input := user_usecase.SignUpInput{
-		Email:    body["email"].(string),
-		Password: body["password"].(string),
+		Email:    body.Email,
+		Password: body.Password,
 		IpAddr:   ctx.IP(),
 	}
 	output, err := c.usecase.SignUp(input)
@@ -40,10 +40,10 @@ func (c *UserController) SignUp(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) SignIn(ctx *fiber.Ctx) error {
-	body := ctx.Context().Value("body").(map[string]any)
+	body := ctx.Context().Value("body").(types.SignInRequest)
 	input := user_usecase.SignInInput{
-		Email:    body["email"].(string),
-		Password: body["password"].(string),
+		Email:    body.Email,
+		Password: body.Password,
 		IpAddr:   ctx.IP(),
 	}
 
@@ -84,10 +84,7 @@ func (c *UserController) Authorization(ctx *fiber.Ctx) error {
 
 func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {
 	userData, isOk := ctx.Context().Value("userData").(types.UserTokenData)
-	body := ctx.Context().Value("body").(map[string]any)
-
-	account := body["receiveAccount"].(string)
-	authType := body["authType"].(string)
+	body := ctx.Context().Value("body").(types.AuthCodeSendRequest)
 
 	if !isOk {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -98,8 +95,8 @@ func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {
 
 	_, err := c.usecase.AuthCodeSend(user_usecase.AuthCodeSendInput{
 		UserId:         userData.UserId,
-		ReceiveAccount: account,
-		AuthType:       authType,
+		ReceiveAccount: body.ReceiveAccount,
+		AuthType:       body.AuthType,
 		IpAddr:         ctx.IP(),
 	})
 

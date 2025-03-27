@@ -119,7 +119,7 @@ func (m *Middleware) BodyParsor(c *fiber.Ctx) error {
 	body := make(map[string]any)
 	json.Unmarshal(c.Body(), &body)
 
-	c.Context().SetUserValue("body", body)
+	// c.Context().SetUserValue("body", body)
 	return c.Next()
 }
 

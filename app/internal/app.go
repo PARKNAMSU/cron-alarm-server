@@ -9,6 +9,7 @@ import (
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/di"
 	v1 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v1"
 	v2 "nspark-cron-alarm.com/cron-alarm-server/app/internal/router/v2"
+	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/middlewares"
 )
 
 var (
@@ -32,6 +33,7 @@ var (
 )
 
 func GetApp() *fiber.App {
+	middlewares.ValidateInit()
 	app := fiber.New(appCfg)
 
 	app.Use(recover.New())
