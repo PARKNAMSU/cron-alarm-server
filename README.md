@@ -6,7 +6,7 @@
 
 프로젝트 기획 시 크론 작업을 대상으로 만들기는 하였지만, 크론 잡 이외에도 API 서버, 클라이언트 등 실시간 로그 확인이 필요한 곳에서 사용할 수 있음.
 
-## 프로젝트 아키텍처
+## 서버 아키텍처
 <img width="817" alt="Image" src="https://github.com/user-attachments/assets/9310d2fb-cb8b-43c5-bb1c-f0b6f6448c6b" />
 
 ## 프로젝트 구성
