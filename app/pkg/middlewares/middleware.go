@@ -10,7 +10,7 @@ import (
 
 var validate = validator.New()
 
-func isType[T any](fl validator.FieldLevel) bool {
+func typeCheck[T any](fl validator.FieldLevel) bool {
 	value := fl.Field().Interface()
 	switch value.(type) {
 	case T:
@@ -20,9 +20,9 @@ func isType[T any](fl validator.FieldLevel) bool {
 }
 
 func ValidateInit() {
-	validate.RegisterValidation("string", isType[string])
-	validate.RegisterValidation("int", isType[int])
-	validate.RegisterValidation("bool", isType[bool])
+	validate.RegisterValidation("string", typeCheck[string])
+	validate.RegisterValidation("int", typeCheck[int])
+	validate.RegisterValidation("bool", typeCheck[bool])
 }
 
 func BodyParsor[T any]() func(c *fiber.Ctx) error {

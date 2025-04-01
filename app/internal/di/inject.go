@@ -1,10 +1,13 @@
 package di
 
 import (
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/controller/platform_controller"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/controller/user_controller"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/middleware"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/log_repository"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/platform_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/usecase/platform_usecase"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/usecase/user_usecase"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
 )
@@ -17,8 +20,9 @@ var ( // db 객체 초기화
 )
 
 var ( // repo 객체 초기화
-	userRepository = user_repository.NewRepository(masterDB, slaveDB)
-	logRepositroy  = log_repository.NewRepository(masterDB, slaveDB)
+	userRepository     = user_repository.NewRepository(masterDB, slaveDB)
+	logRepositroy      = log_repository.NewRepository(masterDB, slaveDB)
+	platformRepository = platform_repository.NewRepository(masterDB, slaveDB)
 )
 
 var ( // usecase 객체 초기화
@@ -26,12 +30,21 @@ var ( // usecase 객체 초기화
 		userRepository,
 		logRepositroy,
 	)
+	platformUsecase = platform_usecase.NewUsecase(
+		userRepository,
+		logRepositroy,
+		platformRepository,
+	)
 )
 
 func InitUserController() *user_controller.UserController {
 	return user_controller.NewController(userUsecase)
 }
 
+func InitPlatformController() *platform_controller.PlatformController {
+	return platform_controller.NewController(platformUsecase)
+}
+
 func InitMiddleware() *middleware.Middleware {
-	return middleware.NewMiddleware(userRepository)
+	return middleware.NewMiddleware(userRepository, platformRepository)
 }

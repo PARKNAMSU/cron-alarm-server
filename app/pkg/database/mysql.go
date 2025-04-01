@@ -14,10 +14,11 @@ var (
 		"userOauth":        "user_oauth",
 		"userLoginData":    "user_login_data",
 		"userRefreshToken": "user_refresh_token",
-		"UserPlatform":     "user_platform",
 		"userAuthCode":     "user_auth_code",
 		"admin":            "admin",
 		"userPermission":   "user_permission",
+
+		"platform": "platform",
 
 		"alarmMethod": "alarm_method",
 		"alarmLog":    "alarm_log",

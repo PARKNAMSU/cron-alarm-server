@@ -1,16 +1,14 @@
 package user_repository
 
-import "time"
+import (
+	"time"
 
-type SelectKeyType uint8
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
+)
 
 var (
-	GET_USER_KEY_EMAIL SelectKeyType = 0
-	GET_USER_KEY_ID    SelectKeyType = 1
-
-	GET_USER_API_KEY_USER_ID SelectKeyType = 0
-	GET_USER_API_KEY_API_KEY SelectKeyType = 1
-	GET_USER_API_KEY_HOST    SelectKeyType = 2
+	GET_USER_KEY_EMAIL types.SelectKeyType = 0
+	GET_USER_KEY_ID    types.SelectKeyType = 1
 )
 
 type CreateUserInput struct {
@@ -58,7 +56,7 @@ type GetRefreshTokenInput struct {
 type GetUserInput struct {
 	UserId        uint
 	Email         string
-	SelectKeyType SelectKeyType
+	SelectKeyType types.SelectKeyType
 }
 
 type GetUserOutput struct {
@@ -83,22 +81,6 @@ type DeleteUserInput struct {
 	UserId int
 }
 
-type GetUserPlatformInput struct {
-	UserId      *int
-	ApiKey      *string
-	Hostname    *string
-	SearchType  SelectKeyType
-	IsGetUsable bool
-}
-
-type GetUserPlatformOutput struct {
-	UserId       int
-	ApiKey       string
-	Status       int
-	Hostname     string
-	PlatformName string
-}
-
 type SetAuthCodeInput struct {
 	UserId         int
 	ReceiveAccount string
@@ -116,18 +98,4 @@ type GetAvailableAuthCodeOutput struct {
 	Action         string
 	AuthType       string
 	Status         *int
-}
-
-type InsertUserPlatformInput struct {
-	Hostname  string
-	ApiKey    string
-	ExpiredAt time.Time
-	UserId    int
-}
-
-type UpdateUserPlatformInput struct {
-	PlatformName *string
-	ExpiredAt    *time.Time
-	Hostname     string
-	UserId       int
 }

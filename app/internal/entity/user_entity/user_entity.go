@@ -65,7 +65,7 @@ type UserRefreshTokenEntity struct { // table: user_refresh_token
 	common_entity.Timestamp
 }
 
-type UserPlatformEntity struct { // table: user_api_key
+type PlatformEntity struct { // table: user_api_key
 	Hostname     string    `db:"hostname"`      // 해당 키를 사용하는 호스트 이름
 	ApiKey       string    `db:"api_key"`       // 플랫폼 인증 api key
 	Status       int       `db:"status"`        // 1: 사용 가능, 0: 사용 중지

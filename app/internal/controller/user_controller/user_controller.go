@@ -106,8 +106,3 @@ func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{"data": "success"})
 }
-
-func (c *UserController) ApiKeyIssue(ctx *fiber.Ctx) error {
-	// todo : api key 발급 로직 추가
-	return ctx.JSON(fiber.Map{"data": "success"})
-}

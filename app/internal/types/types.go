@@ -2,6 +2,8 @@ package types
 
 import "time"
 
+type SelectKeyType uint8
+
 type UserTokenData struct {
 	UserId         int        `json:"userId"`
 	Method         string     `json:"method"`
