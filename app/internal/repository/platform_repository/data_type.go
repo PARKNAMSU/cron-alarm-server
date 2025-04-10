@@ -20,8 +20,9 @@ type InserPlatformInput struct {
 }
 
 type UpdatePlatformInput struct {
-	PlatformName *string
-	ExpiredAt    *time.Time
+	PlatformName string
+	ExpiredAt    time.Time
+	Status       int
 	Hostname     string
 	UserId       int
 }
@@ -40,4 +41,5 @@ type GetPlatformOutput struct {
 	Status       int
 	Hostname     string
 	PlatformName string
+	ExpiredAt    time.Time
 }

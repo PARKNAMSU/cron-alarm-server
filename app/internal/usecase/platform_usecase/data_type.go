@@ -17,3 +17,10 @@ type ApiKeyIssueOutput struct {
 	ExpiredAt time.Time `json:"expiredAt"`
 	Hostname  string    `json:"hostname"`
 }
+
+type SetPlatformInput struct {
+	Hostname     string
+	UserId       int
+	PlatformName string
+	Status       int
+}

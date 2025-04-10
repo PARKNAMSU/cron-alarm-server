@@ -14,6 +14,7 @@ import (
 
 type PlatformUsecaseImpl interface {
 	ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput, *common.CustomError)
+	SetPlatform(input SetPlatformInput) *common.CustomError
 }
 
 type platformUsecase struct {
@@ -90,7 +91,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 	expiredAt := time.Now().Add(config.API_KEY_AVAILABLE_PERIOD)
 
 	// 4. 생성한 api key를 플랫폼 테이블에 저장한다.
-	if err := u.platformRepository.InserPlatform(platform_repository.InserPlatformInput{
+	if err := u.platformRepository.InsertPlatform(platform_repository.InserPlatformInput{
 		UserId:    input.UserData.UserId,
 		Hostname:  input.Hostname,
 		ApiKey:    encryptKey,
@@ -124,4 +125,39 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 		ExpiredAt: expiredAt,
 		Hostname:  input.Hostname,
 	}, nil
+}
+
+func (u *platformUsecase) SetPlatform(input SetPlatformInput) *common.CustomError {
+	list := u.platformRepository.GetPlatform(platform_repository.GetPlatformInput{
+		Hostname:   &input.Hostname,
+		SearchType: platform_repository.GET_PLATFORM_HOST,
+	})
+
+	if len(list) == 0 {
+		return &common.CustomError{
+			Code:   "NOT-EXIST-PLATFORM",
+			Msg:    "플랫폼이 존재하지 않습니다.",
+			Status: 400,
+		}
+	}
+
+	platform := list[0]
+
+	err := u.platformRepository.UpdatePlatform(platform_repository.UpdatePlatformInput{
+		Hostname:     input.Hostname,
+		UserId:       input.UserId,
+		ExpiredAt:    platform.ExpiredAt,
+		Status:       input.Status,
+		PlatformName: input.PlatformName,
+	})
+
+	if err != nil {
+		return &common.CustomError{
+			Code:   "INTERNAL-SERVER-ERROR",
+			Msg:    "internal server error",
+			Status: 500,
+		}
+	}
+
+	return nil
 }

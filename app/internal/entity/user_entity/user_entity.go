@@ -65,16 +65,6 @@ type UserRefreshTokenEntity struct { // table: user_refresh_token
 	common_entity.Timestamp
 }
 
-type PlatformEntity struct { // table: user_api_key
-	Hostname     string    `db:"hostname"`      // 해당 키를 사용하는 호스트 이름
-	ApiKey       string    `db:"api_key"`       // 플랫폼 인증 api key
-	Status       int       `db:"status"`        // 1: 사용 가능, 0: 사용 중지
-	PlatformName string    `db:"platform_name"` // 플랫폼 이름
-	UserId       int       `db:"user_id"`
-	ExpiredAt    time.Time `db:"expired_at"`
-	common_entity.Timestamp
-}
-
 type UserAuthCodeEntity struct { // table: user_auth_code
 	UserId         int       `db:"user_id"`         // pk
 	ReceiveAccount string    `db:"receive_account"` // pk

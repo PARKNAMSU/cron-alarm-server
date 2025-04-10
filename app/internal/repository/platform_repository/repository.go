@@ -1,10 +1,9 @@
 package platform_repository
 
 import (
-	"errors"
 	"time"
 
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/user_entity"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/entity/platform_entity"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/root_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/database"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/common_tool"
@@ -13,7 +12,7 @@ import (
 
 type PlatformRepositoryImpl interface {
 	root_repository.RootRepositoryImpl
-	InserPlatform(input InserPlatformInput) error
+	InsertPlatform(input InserPlatformInput) error
 	UpdatePlatform(input UpdatePlatformInput) error
 	GetPlatform(input GetPlatformInput) []GetPlatformOutput
 }
@@ -35,7 +34,7 @@ func NewRepository(masterDB *database.CustomDB, slaveDB *database.CustomDB) Plat
 	return repo
 }
 
-func (r *platformRepository) InserPlatform(input InserPlatformInput) error {
+func (r *platformRepository) InsertPlatform(input InserPlatformInput) error {
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
 		Table:  database.MYSQL_TABLE["userPlatform"],
 		Action: query_tool.INSERT,
@@ -54,23 +53,14 @@ func (r *platformRepository) InserPlatform(input InserPlatformInput) error {
 }
 
 func (r *platformRepository) UpdatePlatform(input UpdatePlatformInput) error {
-	set := map[string]any{}
-
-	if input.PlatformName != nil {
-		set["platform_name"] = *input.PlatformName
-	}
-	if input.ExpiredAt != nil {
-		set["expired_at"] = *input.ExpiredAt
-	}
-
-	if len(set) == 0 {
-		return errors.New("no update data")
-	}
-
 	query, params := query_tool.QueryBuilder(query_tool.QueryParams{
 		Table:  database.MYSQL_TABLE["userPlatform"],
 		Action: query_tool.INSERT,
-		Set:    set,
+		Set: map[string]any{
+			"platform_name": input.PlatformName,
+			"expired_at":    input.ExpiredAt,
+			"status":        input.Status,
+		},
 		Where: map[string]any{
 			"hostname": input.Hostname,
 			"user_id":  input.UserId,
@@ -83,7 +73,7 @@ func (r *platformRepository) UpdatePlatform(input UpdatePlatformInput) error {
 }
 
 func (r *platformRepository) GetPlatform(input GetPlatformInput) []GetPlatformOutput {
-	list := make([]user_entity.PlatformEntity, 0)
+	list := make([]platform_entity.PlatformEntity, 0)
 
 	where := map[string]any{}
 
@@ -115,7 +105,7 @@ func (r *platformRepository) GetPlatform(input GetPlatformInput) []GetPlatformOu
 	if len(list) == 0 {
 		return []GetPlatformOutput{}
 	}
-	return common_tool.ArrayMap(list, func(data user_entity.PlatformEntity) GetPlatformOutput {
+	return common_tool.ArrayMap(list, func(data platform_entity.PlatformEntity) GetPlatformOutput {
 		return GetPlatformOutput{
 			UserId:       data.UserId,
 			ApiKey:       data.ApiKey,
