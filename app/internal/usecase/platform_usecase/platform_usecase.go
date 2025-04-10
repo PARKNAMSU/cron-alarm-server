@@ -4,16 +4,16 @@ import (
 	"time"
 
 	"nspark-cron-alarm.com/cron-alarm-server/app/config"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/log_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/platform_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/common_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/encrypt_tool"
 )
 
 type PlatformUsecaseImpl interface {
-	ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput, *types.CustomError)
+	ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput, *common.CustomError)
 }
 
 type platformUsecase struct {
@@ -41,7 +41,7 @@ func NewUsecase(
 	return usecase
 }
 
-func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput, *types.CustomError) {
+func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput, *common.CustomError) {
 	// 1. 사용자의 플랫폼 전체 목록을 조회한다.
 	list := u.platformRepository.GetPlatform(platform_repository.GetPlatformInput{
 		UserId:      &input.UserData.UserId,
@@ -50,7 +50,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 	})
 	// 2. 사용자의 최대 플랫폼 생성 개수가 넘었는지 확인한다.
 	if len(list) >= input.UserData.MaxPlatformCnt {
-		return ApiKeyIssueOutput{}, &types.CustomError{
+		return ApiKeyIssueOutput{}, &common.CustomError{
 			Code:   "MAX-PLATFORM-CNT",
 			Msg:    "플랫폼 생성 개수를 초과하였습니다.",
 			Status: 400,
@@ -59,7 +59,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 
 	for _, platform := range list {
 		if platform.Hostname == input.Hostname {
-			return ApiKeyIssueOutput{}, &types.CustomError{
+			return ApiKeyIssueOutput{}, &common.CustomError{
 				Code:   "PLATFORM-EXIST",
 				Msg:    "이미 존재하는 플랫폼입니다.",
 				Status: 400,
@@ -70,7 +70,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 	var encryptKey string
 	// 3. 넘지 않았을 경우 api key를 생성한다.
 	if apiKey, err := common_tool.RandomString(32); err != nil {
-		return ApiKeyIssueOutput{}, &types.CustomError{
+		return ApiKeyIssueOutput{}, &common.CustomError{
 			Code:   "INTERNAL-SERVER-ERROR",
 			Msg:    "internal server error",
 			Status: 500,
@@ -80,7 +80,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 	}
 
 	if len(encryptKey) <= 0 {
-		return ApiKeyIssueOutput{}, &types.CustomError{
+		return ApiKeyIssueOutput{}, &common.CustomError{
 			Code:   "INTERNAL-SERVER-ERROR",
 			Msg:    "internal server error",
 			Status: 500,
@@ -96,7 +96,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 		ApiKey:    encryptKey,
 		ExpiredAt: expiredAt,
 	}); err != nil {
-		return ApiKeyIssueOutput{}, &types.CustomError{
+		return ApiKeyIssueOutput{}, &common.CustomError{
 			Code:   "INTERNAL-SERVER-ERROR",
 			Msg:    "internal server error",
 			Status: 500,
@@ -111,7 +111,7 @@ func (u *platformUsecase) ApiKeyIssue(input ApiKeyIssueInput) (ApiKeyIssueOutput
 		IpAddr:   input.IpAddr,
 		Action:   "issue",
 	}); err != nil {
-		return ApiKeyIssueOutput{}, &types.CustomError{
+		return ApiKeyIssueOutput{}, &common.CustomError{
 			Code:   "INTERNAL-SERVER-ERROR",
 			Msg:    "internal server error",
 			Status: 500,

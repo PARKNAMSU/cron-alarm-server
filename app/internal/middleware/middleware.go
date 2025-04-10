@@ -7,9 +7,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"nspark-cron-alarm.com/cron-alarm-server/app/config"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/platform_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/encrypt_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/jwt_tool"
 )
@@ -42,7 +42,7 @@ func (m *Middleware) UserValidation(c *fiber.Ctx) error {
 	accessToken := c.Get("access-token")
 	refreshToken := c.Get("refresh-token")
 
-	userData, err := jwt_tool.GetData[types.UserTokenData](accessToken, config.JWT_ACCESS_TOKEN_KEY)
+	userData, err := jwt_tool.GetData[common.UserTokenData](accessToken, config.JWT_ACCESS_TOKEN_KEY)
 
 	if err != nil {
 		tokenData := m.userRepository.GetRefreshToken(refreshToken)
@@ -54,7 +54,7 @@ func (m *Middleware) UserValidation(c *fiber.Ctx) error {
 			})
 		}
 
-		userData, err = jwt_tool.GetData[types.UserTokenData](refreshToken, config.JWT_REFRESH_TOKEN_KEY)
+		userData, err = jwt_tool.GetData[common.UserTokenData](refreshToken, config.JWT_REFRESH_TOKEN_KEY)
 		accessToken = jwt_tool.GenerateToken(userData, config.JWT_ACCESS_TOKEN_KEY, time.Minute*30)
 
 		if err != nil {

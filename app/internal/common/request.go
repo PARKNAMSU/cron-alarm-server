@@ -1,4 +1,4 @@
-package types
+package common
 
 type SignUpRequest struct {
 	Email    string `json:"email" validate:"string"`

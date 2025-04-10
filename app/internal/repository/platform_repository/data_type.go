@@ -3,13 +3,13 @@ package platform_repository
 import (
 	"time"
 
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 )
 
 var (
-	GET_PLATFORM_USER_ID types.SelectKeyType = 0
-	GET_PLATFORM_API_KEY types.SelectKeyType = 1
-	GET_PLATFORM_HOST    types.SelectKeyType = 2
+	GET_PLATFORM_USER_ID common.SelectKeyType = 0
+	GET_PLATFORM_API_KEY common.SelectKeyType = 1
+	GET_PLATFORM_HOST    common.SelectKeyType = 2
 )
 
 type InserPlatformInput struct {
@@ -30,7 +30,7 @@ type GetPlatformInput struct {
 	UserId      *int
 	ApiKey      *string
 	Hostname    *string
-	SearchType  types.SelectKeyType
+	SearchType  common.SelectKeyType
 	IsGetUsable bool
 }
 

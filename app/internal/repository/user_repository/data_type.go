@@ -3,12 +3,12 @@ package user_repository
 import (
 	"time"
 
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 )
 
 var (
-	GET_USER_KEY_EMAIL types.SelectKeyType = 0
-	GET_USER_KEY_ID    types.SelectKeyType = 1
+	GET_USER_KEY_EMAIL common.SelectKeyType = 0
+	GET_USER_KEY_ID    common.SelectKeyType = 1
 )
 
 type CreateUserInput struct {
@@ -56,7 +56,7 @@ type GetRefreshTokenInput struct {
 type GetUserInput struct {
 	UserId        uint
 	Email         string
-	SelectKeyType types.SelectKeyType
+	SelectKeyType common.SelectKeyType
 }
 
 type GetUserOutput struct {

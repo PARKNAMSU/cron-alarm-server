@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"nspark-cron-alarm.com/cron-alarm-server/app/config"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/log_repository"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/repository/user_repository"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/common_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/encrypt_tool"
 	"nspark-cron-alarm.com/cron-alarm-server/app/pkg/tool/jwt_tool"
@@ -52,7 +52,7 @@ func (u *userUsecase) SignUp(input SignUpInput) (*SignUpOutput, error) {
 	}
 
 	output := &SignUpOutput{}
-	userData := types.UserTokenData{
+	userData := common.UserTokenData{
 		Email: &input.Email,
 	}
 
@@ -156,7 +156,7 @@ func (u *userUsecase) SignIn(input SignInInput) (*SignInOutput, error) {
 	output.CreatedAt = user.CreatedAt
 	output.UpdatedAt = user.UpdatedAt
 
-	userData := types.UserTokenData{
+	userData := common.UserTokenData{
 		Email:     &input.Email,
 		UserId:    user.UserId,
 		Method:    user.Method,

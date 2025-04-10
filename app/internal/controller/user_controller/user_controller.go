@@ -2,7 +2,7 @@ package user_controller
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 	"nspark-cron-alarm.com/cron-alarm-server/app/internal/usecase/user_usecase"
 )
 
@@ -24,7 +24,7 @@ func NewController(usecase user_usecase.UserUsecaseImpl) *UserController {
 }
 
 func (c *UserController) SignUp(ctx *fiber.Ctx) error {
-	body := ctx.Context().Value("body").(types.SignUpRequest)
+	body := ctx.Context().Value("body").(common.SignUpRequest)
 	input := user_usecase.SignUpInput{
 		Email:    body.Email,
 		Password: body.Password,
@@ -40,7 +40,7 @@ func (c *UserController) SignUp(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) SignIn(ctx *fiber.Ctx) error {
-	body := ctx.Context().Value("body").(types.SignInRequest)
+	body := ctx.Context().Value("body").(common.SignInRequest)
 	input := user_usecase.SignInInput{
 		Email:    body.Email,
 		Password: body.Password,
@@ -57,7 +57,7 @@ func (c *UserController) SignIn(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) Authorization(ctx *fiber.Ctx) error {
-	userData, isExist := ctx.Context().Value("userData").(types.UserTokenData)
+	userData, isExist := ctx.Context().Value("userData").(common.UserTokenData)
 	body := ctx.Context().Value("body").(map[string]any)
 
 	code := body["code"].(string)
@@ -83,8 +83,8 @@ func (c *UserController) Authorization(ctx *fiber.Ctx) error {
 }
 
 func (c *UserController) AuthCodeSend(ctx *fiber.Ctx) error {
-	userData, isOk := ctx.Context().Value("userData").(types.UserTokenData)
-	body := ctx.Context().Value("body").(types.AuthCodeSendRequest)
+	userData, isOk := ctx.Context().Value("userData").(common.UserTokenData)
+	body := ctx.Context().Value("body").(common.AuthCodeSendRequest)
 
 	if !isOk {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{

@@ -1,8 +1,6 @@
 package user_usecase
 
-import (
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
-)
+import "nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 
 type SignUpInput struct {
 	Email    string
@@ -11,7 +9,7 @@ type SignUpInput struct {
 }
 
 type SignUpOutput struct {
-	types.UserTokenData
+	common.UserTokenData
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
@@ -23,19 +21,19 @@ type SignInInput struct {
 }
 
 type SignInOutput struct {
-	types.UserTokenData
+	common.UserTokenData
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
 
 type AuthorizationInput struct {
-	UserData types.UserTokenData
+	UserData common.UserTokenData
 	Code     string
 	IpAddr   string
 }
 
 type AuthorizationOutput struct {
-	types.UserTokenData
+	common.UserTokenData
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }

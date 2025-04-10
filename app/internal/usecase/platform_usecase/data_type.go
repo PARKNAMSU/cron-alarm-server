@@ -3,11 +3,11 @@ package platform_usecase
 import (
 	"time"
 
-	"nspark-cron-alarm.com/cron-alarm-server/app/internal/types"
+	"nspark-cron-alarm.com/cron-alarm-server/app/internal/common"
 )
 
 type ApiKeyIssueInput struct {
-	UserData types.UserTokenData
+	UserData common.UserTokenData
 	Hostname string
 	IpAddr   string
 }
